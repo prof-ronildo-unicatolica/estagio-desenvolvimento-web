@@ -34,6 +34,7 @@ Guias que definem *como* o software será construído, estabelecendo os padrões
 * **[Modelagem de Dados e Banco](./docs/03_arquitetura_tecnica/modelagem_dados_postgres.md)**: Dicionário de dados, relacionamentos e Diagrama Entidade-Relacionamento (ER) que fundamenta o sistema no PostgreSQL.
 * **[Modelagem NoSQL (MongoDB)](./docs/03_arquitetura_tecnica/modelagem_dados_mongodb.md)**: Estrutura de documentos, trilha de auditoria e sincronização (CQRS) no MongoDB.
 * **[Diagramas Técnicos (Classes e Sequência)](./docs/03_arquitetura_tecnica/diagramas_projeto.md)**: Visualização da modelagem orientada a objetos (SQLAlchemy) e fluxo temporal de interações das telas com a API.
+* **[Estrutura de Diretórios (Monorepo)](./docs/03_arquitetura_tecnica/estrutura_pastas.md)**: Guia de organização de pastas no padrão Monorepo com Docker para frontend, gateway e microsserviços.
 
 ---
 
