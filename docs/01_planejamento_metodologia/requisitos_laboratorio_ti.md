@@ -15,6 +15,7 @@ Para o bom andamento das aulas práticas da disciplina de Estágio II, solicito 
 | Software | Versão Mínima | Descrição / Justificativa |
 | :--- | :--- | :--- |
 | **Python** | 3.10 ou superior | Linguagem base para o framework backend. **Importante:** Marcar a opção "Add Python to PATH" durante a instalação. |
+| **Node.js** | 20.x (LTS) ou superior | Ambiente de execução JavaScript/TypeScript necessário para compilar e executar o frontend (React + Vite). |
 | **Poetry** | Mais recente | Gerenciador de dependências oficial do projeto (instalado via pip ou instalador próprio). Necessário para gerenciar os pacotes virtuais do Python. |
 | **Git** | Mais recente | Sistema de controle de versão. Essencial para o fluxo de repositórios e entrega de trabalhos. |
 | **Visual Studio Code (VS Code)** | Mais recente | Editor de código padrão da disciplina. |
@@ -24,6 +25,8 @@ Para agilizar as aulas e padronizar o ambiente, caso seja possível a pré-confi
 - **Python** (Microsoft)
 - **Pylance** (Microsoft)
 - **GitLens** (GitKraken)
+- **Tailwind CSS IntelliSense** (Tailwind Labs)
+- **ESLint** (Dirk Baeumer)
 
 ---
 
@@ -64,8 +67,9 @@ Para garantir que os alunos consigam desenvolver e testar sem bloqueios, os comp
 1. **Acesso à Internet:**
    - Liberação para clonagem e push no domínio `github.com` (via HTTPS e SSH).
    - Liberação para download de dependências Python via gerenciadores `pip` e `poetry` (acesso aos domínios do `pypi.org` e `python-poetry.org`).
+   - Liberação para download de dependências JavaScript/Node via `npm` (acesso aos domínios `registry.npmjs.org`).
 2. **Portas Locais (Localhost):**
-   - Os alunos precisam ter permissão para rodar processos locais (abrir portas). As portas frequentemente utilizadas serão: `8000` (FastAPI), `5432` (PostgreSQL), `27017` (MongoDB) e `5672`/`15672` (RabbitMQ).
+   - Os alunos precisam ter permissão para rodar processos locais (abrir portas). As portas frequentemente utilizadas serão: `5173` (Vite Frontend), `8000` (FastAPI Backend), `5432` (PostgreSQL), `27017` (MongoDB) e `5672`/`15672` (RabbitMQ).
 3. **Privilégios de Execução:**
    - Permissão para abrir e executar terminais (Prompt de Comando, PowerShell ou Bash) integrados no VS Code.
 
