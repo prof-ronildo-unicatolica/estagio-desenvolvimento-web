@@ -93,6 +93,116 @@ flowchart TD
     class Processando,Sucesso status;
 ```
 
+### 2.2. Wireframes / Blueprints Visuais de Fluxo (Cliente)
+
+Para auxiliar na visualização do layout das telas e elementos de interface (UI) obrigatórios, o diagrama abaixo atua como um blueprint visual das páginas e do caminho que o hóspede percorre:
+
+```mermaid
+flowchart TD
+    %% Telas
+    Login["🔐 TELA LOGIN / CADASTRO
+    ===========================
+    [ Campo: E-mail ]
+    [ Campo: Senha ]
+    
+    [ Botão: Entrar ]
+    ---------------------------
+    Não tem conta? [ Cadastrar-se ]"]
+
+    Home["🏠 TELA HOME (BUSCA)
+    ===========================
+    Filtros de Busca:
+    • Cidade (Dropdown)
+    • Check-in / Check-out (Calendário)
+    • Hóspedes (Adultos / Crianças)
+    • Estrelas (⭐ 1 a 5)
+    
+    [ Botão: Buscar Hotéis ]"]
+
+    ListHoteis["🔍 LISTAGEM DE HOTÉIS
+    ===========================
+    Resultados da busca na cidade:
+    
+    🏢 Hotel A (⭐⭐⭐⭐) - R$ 200/dia
+    🏢 Hotel B (⭐⭐⭐⭐⭐) - R$ 400/dia
+    
+    [ Botão: Ver Detalhes do Hotel ]"]
+
+    Detalhes["🏢 DETALHES DO HOTEL & QUARTOS
+    ===========================
+    Vila dos Ventos Resort (⭐⭐⭐⭐⭐)
+    Média Avaliação: 4.8 / 5
+    Comodidades: Piscina, Wi-Fi, Academia
+    ---------------------------
+    Quartos Disponíveis:
+    • 101 - Casal Luxo - R$ 280/dia
+    • 102 - Família Premium - R$ 450/dia
+    
+    [ Botão: Reservar este Quarto ]"]
+
+    Checkout["💳 CHECKOUT & CUSTOMIZAÇÃO
+    ===========================
+    Resumo: Quarto 101 | 5 diárias
+    ---------------------------
+    Tipo de Tarifa:
+    ( ) Reembolsável (Normal)
+    ( ) Não Reembolsável (-10%)
+    
+    Opcionais e Extras:
+    [ ] Early Check-in (+30% diária)
+    [ ] Late Checkout (+30% diária)
+    [x] Café da Manhã (+R$ 30/dia)
+    ---------------------------
+    Total Estimado: R$ 1.520,00
+    
+    [ Botão: Confirmar e Pagar ]"]
+
+    Processando["⏳ PROCESSANDO RESERVA
+    ===========================
+    Reserva enviada para a fila...
+    Aguarde a confirmação do pagamento.
+    
+    ( Ícone de Loading Girando )
+    [ Short Polling ativo a cada 3s ]"]
+
+    Sucesso["🎉 VOUCHER (SUCESSO)
+    ===========================
+    Reserva Confirmada com Sucesso!
+    Voucher ID: #reserva-uuid-v7
+    ---------------------------
+    • Hotel: Vila dos Ventos
+    • Quarto: 101 (Casal Luxo)
+    • Check-in: 10/07/2026
+    • Checkout: 15/07/2026
+    
+    [ Botão: Ir para Minhas Reservas ]"]
+
+    PainelCliente["📋 MINHAS RESERVAS
+    ===========================
+    Suas solicitações de estadias:
+    
+    • #Reserva 8888 - Confirmada
+      [ Botão: Cancelar Reserva ]
+      
+    • #Reserva 7777 - Cancelada
+    
+    • #Reserva 6666 - Concluída
+      [ Botão: Avaliar Estadia ]"]
+
+    %% Conexões / Fluxos
+    Login -->|Sucesso| Home
+    Home -->|Buscar| ListHoteis
+    ListHoteis -->|Selecionar| Detalhes
+    Detalhes -->|Reservar| Checkout
+    Checkout -->|Pagar| Processando
+    
+    Processando -->|Sucesso no Pagamento| Sucesso
+    Processando -->|Falha no Pagamento / Overbooking| Detalhes
+    
+    Sucesso --> PainelCliente
+    Home -.->|Menu de Navegação| PainelCliente
+```
+
 ---
 
 ## 3. Requisitos por Tela
