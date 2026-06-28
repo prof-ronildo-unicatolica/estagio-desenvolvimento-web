@@ -31,6 +31,7 @@ No nosso ecossistema de microsserviços, frontend e Docker, esta abordagem traz 
 ```text
 / (raiz do projeto)
 ├── apps/                           # Aplicacoes principais executaveis
+│   ├── frontend/                   # Cliente Web (React + Vite)
 │   │   ├── src/                    # Codigo fonte do frontend
 │   │   │   ├── components/         # Componentes React (Sidebar, ProfessorProfile, DisciplinasList, StacksTable, ImageAndCarousel, MapComponent)
 │   │   │   ├── App.jsx             # Orquestrador principal (Navbar, Layout, API fetch)
