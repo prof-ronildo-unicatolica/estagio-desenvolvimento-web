@@ -163,3 +163,20 @@ flowchart TD
 * **Rota Pública:** `/` (Busca e visualização de hotéis/quartos).
 * **Rotas de Clientes:** `/checkout`, `/minhas-reservas` (Requer token JWT padrão).
 * **Rotas Administrativas:** `/admin/*` (Requer token JWT e validação de permissão de administrador `is_admin === true`).
+
+---
+
+## 5. Sugestão de Tecnologias (Front-End)
+
+Considerando a curva de aprendizado e o tempo disponível no semestre, as equipes possuem **liberdade de escolha** sobre qual stack utilizar no front-end. No entanto, para evitar complexidade excessiva e focar no desenvolvimento das regras de negócio e mensageria no backend, **sugerem-se** as seguintes opções:
+
+### Opção A (Recomendada para SPA): Vue.js + Vite
+* **Por que usar:** O Vue.js possui uma curva de aprendizado extremamente amigável para estudantes. A estrutura de arquivo único (`.vue`) com separação clara entre `<template>`, `<script>` e `<style>` facilita o desenvolvimento sem a necessidade de gerenciar re-renderizações complexas ou hooks intrincados como no React.
+* **Ferramenta:** Inicialização rápida com **Vite** (`npm create vite@latest`) e gerenciador de pacotes (npm/pnpm).
+
+### Opção B (Recomendada para simplicidade máxima): Alpine.js + Tailwind CSS (via CDN)
+* **Por que usar:** Ideal para quem deseja evitar etapas de compilação ou configuração de ambiente local Node.js. O Alpine.js fornece reatividade básica (diretivas como `x-data`, `x-model`, `x-show`) diretamente no HTML clássico por meio de uma tag `<script>` carregada via CDN.
+* **Ferramenta:** Apenas arquivos HTML estáticos vinculados às bibliotecas via CDN.
+
+*Nota: Caso as equipes tenham preferência e domínio prévio sobre outros frameworks como React, Next.js ou Angular, a escolha é livre, contanto que todos os requisitos de fluxo e integração descritos neste documento sejam atendidos.*
+
