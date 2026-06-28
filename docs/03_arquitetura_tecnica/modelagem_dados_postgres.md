@@ -296,3 +296,84 @@ CREATE TABLE reserva_servicos (
     PRIMARY KEY (reserva_id, servico_id)
 );
 ```
+
+---
+
+## Boilerplate Tutorial — Tabelas de Aprendizado
+
+> As tabelas abaixo fazem parte do **boilerplate inicial** do projeto e servem exclusivamente como material didático para os alunos aprenderem os quatro tipos de relacionamento antes de construir o sistema real.
+
+### Diagrama ERD do Tutorial
+
+```mermaid
+erDiagram
+    PROFESSORES {
+        uuid id PK
+        string nome
+        string email UK
+    }
+
+    PROFESSOR_DETALHES {
+        uuid id PK
+        uuid professor_id FK UK
+        string sala
+        text biografia
+        json biografia_mapa
+    }
+
+    DISCIPLINAS {
+        uuid id PK
+        string nome
+        int ano
+        int semestre
+        uuid professor_id FK
+    }
+
+    TECNOLOGIAS {
+        uuid id PK
+        string nome UK
+        uuid stack_id FK
+    }
+
+    STACKS {
+        uuid id PK
+        string nome UK
+    }
+
+    LINGUAGENS {
+        uuid id PK
+        string nome UK
+    }
+
+    DISCIPLINA_TECNOLOGIA {
+        uuid disciplina_id PK
+        uuid tecnologia_id PK
+    }
+
+    TECNOLOGIA_LINGUAGEM {
+        uuid tecnologia_id PK
+        uuid linguagem_id PK
+    }
+
+    PROFESSORES ||--|| PROFESSOR_DETALHES : "1:1"
+    PROFESSORES ||--o{ DISCIPLINAS : "1:N"
+    STACKS ||--o{ TECNOLOGIAS : "1:N"
+    DISCIPLINAS }o--o{ TECNOLOGIAS : "N:M (via DISCIPLINA_TECNOLOGIA)"
+    TECNOLOGIAS }o--o{ LINGUAGENS : "N:M (via TECNOLOGIA_LINGUAGEM)"
+```
+
+### Campos Especiais
+
+| Tabela | Campo | Tipo | Descrição |
+| :--- | :--- | :--- | :--- |
+| `professor_detalhes` | `biografia_mapa` | `JSON` | GeoJSON do tipo `FeatureCollection` com pontos geográficos da trajetória do professor. Cada feature inclui `local`, `descricao` e coordenadas `[longitude, latitude]`. |
+| `cidades` | `limite_territorial` | `JSONB` | GeoJSON do tipo `Polygon` com o contorno geográfico da cidade (dado real, recomendado buscar no IBGE). |
+
+### Seed de Dados do Tutorial
+
+O seed é executado automaticamente via **Alembic** (`alembic upgrade head`) na migração inicial `001_initial_schema_and_seed.py`. Inclui:
+
+- **1 Professor** com detalhes completos e trajetória geográfica (9 pontos GeoJSON)
+- **4 Disciplinas** (Redes, FSI, Arquitetura de Computadores, Desenvolvimento WEB)
+- **3 Stacks** (Backend, Frontend, Banco de Dados), **8 Tecnologias** e **5 Linguagens**
+- Relacionamentos N:M completos entre Disciplinas ↔ Tecnologias ↔ Linguagens

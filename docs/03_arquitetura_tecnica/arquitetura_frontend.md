@@ -280,13 +280,14 @@ flowchart TD
 
 Considerando a curva de aprendizado e o tempo disponível no semestre, as equipes possuem **liberdade de escolha** sobre qual stack utilizar no front-end. No entanto, para evitar complexidade excessiva e focar no desenvolvimento das regras de negócio e mensageria no backend, **sugerem-se** as seguintes opções:
 
-### Opção A (Recomendada para SPA): Vue.js + Vite
-* **Por que usar:** O Vue.js possui uma curva de aprendizado extremamente amigável para estudantes. A estrutura de arquivo único (`.vue`) com separação clara entre `<template>`, `<script>` e `<style>` facilita o desenvolvimento sem a necessidade de gerenciar re-renderizações complexas ou hooks intrincados como no React.
-* **Ferramenta:** Inicialização rápida com **Vite** (`npm create vite@latest`) e gerenciador de pacotes (npm/pnpm).
+### Opção A (Padrão Oficial Adotado no Monorepo - SPA): React + Vite + Bootstrap 5
+* **Por que usar:** Fornece um ambiente de SPA componentizado rápido e robusto. O Bootstrap 5 foi selecionado para acelerar o desenvolvimento de interfaces com seus componentes de prateleira prontos (tabelas, listgroups, carrosséis) sem exigir processos de build de CSS complexos como no Tailwind.
 
-### Opção B (Recomendada para simplicidade máxima): Alpine.js + Tailwind CSS (via CDN)
-* **Por que usar:** Ideal para quem deseja evitar etapas de compilação ou configuração de ambiente local Node.js. O Alpine.js fornece reatividade básica (diretivas como `x-data`, `x-model`, `x-show`) diretamente no HTML clássico por meio de uma tag `<script>` carregada via CDN.
-* **Ferramenta:** Apenas arquivos HTML estáticos vinculados às bibliotecas via CDN.
+### Opção B (Alternativa de Framework - SPA): Vue.js + Vite
+* **Por que usar:** Curva de aprendizado amigável para quem prefere arquivos de extensão única (`.vue`) com divisão entre scripts e templates.
 
-*Nota: Caso as equipes tenham preferência e domínio prévio sobre outros frameworks como React, Next.js ou Angular, a escolha é livre, contanto que todos os requisitos de fluxo e integração descritos neste documento sejam atendidos.*
+### Opção C (Alternativa com Renderização no Servidor - SSR): Next.js + Tailwind CSS
+* **Por que usar:** Para equipes que desejam trabalhar com roteamento baseado em arquivos, Server-Side Rendering e o App Router do React.
+
+*Nota: Caso as equipes tenham preferência e domínio prévio sobre outros frameworks como React, Vue ou Angular, a escolha é livre, contanto que todos os requisitos de fluxo e integração descritos neste documento sejam atendidos.*
 

@@ -30,31 +30,37 @@ No nosso ecossistema de microsserviços, frontend e Docker, esta abordagem traz 
 
 ```text
 / (raiz do projeto)
-├── apps/                           # Aplicações principais executáveis
-│   ├── frontend/                   # Aplicação Frontend (React, Next.js, Vue, etc.)
-│   │   ├── src/                    # Código fonte do frontend
-│   │   ├── public/                 # Assets públicos
-│   │   ├── Dockerfile              # Dockerfile para build do Frontend
-│   │   └── package.json
+├── apps/                           # Aplicacoes principais executaveis
+│   │   ├── src/                    # Codigo fonte do frontend
+│   │   │   ├── components/         # Componentes React (Sidebar, ProfessorProfile, DisciplinasList, StacksTable, ImageAndCarousel, MapComponent)
+│   │   │   ├── App.jsx             # Orquestrador principal (Navbar, Layout, API fetch)
+│   │   │   ├── main.jsx            # Ponto de entrada React + imports globais (Bootstrap, Leaflet)
+│   │   │   └── custom.css          # CSS customizado para os alunos
+│   │   ├── public/                 # Imagens e assets estaticos
+│   │   ├── index.html              # Template base HTML
+│   │   ├── vite.config.js          # Configuracoes de compilacao do Vite
+│   │   └── package.json            # Dependencias do Frontend (React, Bootstrap, Leaflet)
 │   │
-│   ├── api-gateway/                # Ponto de entrada único para o ecossistema (Nginx/Kong/Node)
+│   ├── api-gateway/                # Ponto de entrada unico para o ecossistema (Nginx/Kong/Node)
 │   │   ├── Dockerfile
 │   │   └── ...
 │   │
-│   └── services/                   # Microsserviços do Backend
-│       ├── auth-service/           # Serviço de Autenticação e Usuários
+│   └── services/                   # Microsservicos do Backend
+│       ├── auth-service/           # Servico de Autenticacao e Usuarios
 │       │   ├── src/
 │       │   ├── tests/
 │       │   ├── Dockerfile
 │       │   └── requirements.txt / package.json
 │       │
-│       ├── core-service/           # Serviço com as regras de negócio principais
-│       │   ├── src/
-│       │   ├── tests/
-│       │   ├── Dockerfile
+│       ├── core-service/           # Servico com as regras de negocio principais
+│       │   ├── app/                # Codigo fonte do FastAPI (main.py, api/, models/, schemas/, repositories/, services/)
+│       │   ├── alembic/            # Historico de versionamento e migrations do Postgres
+│       │   ├── env_example         # Modelo legivel de configuracoes de ambiente
+│       │   ├── pyproject.toml      # Configuracao de dependencias do Poetry
+│       │   ├── requirements.txt    # Configuracao de dependencias do pip/venv
 │       │   └── ...
 │       │
-│       └── [outro-servico]/        # Outros microsserviços independentes
+│       └── [outro-servico]/        # Outros microsservicos independentes
 │
 ├── packages/                       # Pacotes/Módulos reutilizáveis compartilhados
 │   ├── database-schemas/           # Modelos de dados e migrações compartilhadas

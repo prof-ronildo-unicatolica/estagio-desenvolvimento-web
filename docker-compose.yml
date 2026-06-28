@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # ─── Bancos de Dados ────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: hotel-postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=hotel_db_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hotel_db_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:7.0
+    container_name: hotel-mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Backend (Core Service) ─────────────────────────────────────────────────
+  core-service:
+    build:
+      context: ./apps/services/core-service
+      dockerfile: Dockerfile
+    container_name: hotel-core-service
+    restart: always
+    environment:
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=hotel_db_dev
+      - POSTGRES_PORT=5432
+      - MONGODB_URL=mongodb://admin:admin123@mongodb:27017
+      - MONGODB_DB=hotel_mongo_dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    command: >
+      sh -c "
+        poetry run alembic upgrade head &&
+        poetry run python -m app.core.seed_mongo &&
+        poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000
+      "
+
+  # ─── Frontend (React + Vite) ─────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    container_name: hotel-frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - core-service
+
+volumes:
+  postgres_data:
+  mongo_data:

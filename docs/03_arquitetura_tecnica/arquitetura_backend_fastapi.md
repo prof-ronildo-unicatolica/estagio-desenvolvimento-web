@@ -30,6 +30,7 @@ Adotaremos a estrutura padrão de projetos Python gerenciados via **Poetry**, se
 │   │   ├── hotel.py
 │   │   ├── usuario.py
 │   │   └── reserva.py
+│   ├── repositories/          # Abstração de acesso a dados (Queries SQLAlchemy)
 │   ├── services/              # Camada de lógica de negócio e queries complexas
 │   │   ├── reserva_service.py
 │   │   └── ...
@@ -63,9 +64,10 @@ Para garantir facilidade de manutenção e testes independentes, a aplicação �
 
 1. **Camada de Exposição (API - FastAPI Routes)**: Responsável por receber as requisições HTTP, delegar a lógica para os serviços correspondentes e retornar respostas estruturadas. Não deve conter lógica de banco direta ou regras de validação complexas.
 2. **Camada de Validação e DTOs (Pydantic Schemas)**: Garante a tipagem, validação prévia dos dados de entrada (tipos, tamanhos, e-mails válidos) e a formatação adequada da saída (ocultando campos sensíveis como o hash da senha).
-3. **Camada de Negócio (Services)**: Centraliza as regras de negócio do sistema (ex: verificar se o número de hóspedes é compatível com o quarto). É a única camada que orquestra interações complexas entre múltiplos modelos de dados.
-4. **Camada de Dados (SQLAlchemy Models)**: Representa o mapeamento direto das tabelas físicas do PostgreSQL. As migrations geradas pelo Alembic refletem exatamente esta pasta de modelos.
-5. **Mensageria e Workers (RabbitMQ / Celery)**: Executa tarefas assíncronas em segundo plano que requerem alto tempo de processamento (processamento do pagamento e geração de documentos de confirmação), garantindo que o cliente receba a resposta HTTP quase instantaneamente.
+3. **Camada de Repositórios (Repositories)**: Isola o acesso a dados e consultas SQL/SQLAlchemy directas da camada de serviços, facilitando a troca de tecnologia ou realização de mocks.
+4. **Camada de Negócio (Services)**: Centraliza as regras de negócio do sistema (ex: verificar se o número de hóspedes é compatível com o quarto). É a única camada que orquestra interações complexas entre múltiplos modelos de dados.
+5. **Camada de Dados (SQLAlchemy Models)**: Representa o mapeamento direto das tabelas físicas do PostgreSQL. As migrations geradas pelo Alembic refletem exatamente esta pasta de modelos.
+6. **Mensageria e Workers (RabbitMQ / Celery)**: Executa tarefas assíncronas em segundo plano que requerem alto tempo de processamento (processamento do pagamento e geração de documentos de confirmação), garantindo que o cliente receba a resposta HTTP quase instantaneamente.
 
 ---
 

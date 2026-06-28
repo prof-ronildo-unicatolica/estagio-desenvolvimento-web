@@ -36,6 +36,12 @@ Guias que definem *como* o software será construído, estabelecendo os padrões
 * **[Diagramas Técnicos (Classes e Sequência)](./docs/03_arquitetura_tecnica/diagramas_projeto.md)**: Visualização da modelagem orientada a objetos (SQLAlchemy) e fluxo temporal de interações das telas com a API.
 * **[Estrutura de Diretórios (Monorepo)](./docs/03_arquitetura_tecnica/estrutura_pastas.md)**: Guia de organização de pastas no padrão Monorepo com Docker para frontend, gateway e microsserviços.
 
+## 4. Guias de Instalação e Tutoriais
+
+Manuais práticos para configuração rápida do ambiente local de desenvolvimento.
+
+* **[Guia de Instalação do Ambiente](./docs/04_guias_tutoriais/guia_instalacao.md)**: Passo a passo para Linux e Windows abrangendo Docker, Python (venv/Poetry), npm (Vite) e comandos úteis do Alembic.
+
 ---
 
 *Esta documentação é viva e poderá ser atualizada pelo professor ao longo das Sprints conforme a evolução e necessidade da turma.*
