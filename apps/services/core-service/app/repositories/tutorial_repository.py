@@ -1,3 +1,5 @@
+import uuid
+from typing import Any
 from sqlalchemy.orm import Session, joinedload
 
 from app.models.tutorial import (
@@ -60,3 +62,21 @@ class TutorialRepository:
         self.db.commit()
         self.db.refresh(prof)
         return prof
+
+    def create_disciplina(
+        self,
+        nome: str,
+        ano: int,
+        semestre: int,
+        professor_id: Any,
+    ) -> Disciplina:
+        disciplina = Disciplina(
+            nome=nome,
+            ano=ano,
+            semestre=semestre,
+            professor_id=professor_id,
+        )
+        self.db.add(disciplina)
+        self.db.commit()
+        self.db.refresh(disciplina)
+        return disciplina

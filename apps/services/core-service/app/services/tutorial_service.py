@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from app.core.rabbitmq import publish_event
 from app.repositories.tutorial_repository import TutorialRepository
 
 
@@ -65,3 +66,24 @@ class TutorialService:
             biografia=payload.biografia,
             biografia_mapa=payload.biografia_mapa,
         )
+
+    async def create_disciplina(self, payload):
+        disciplina = self.repository.create_disciplina(
+            nome=payload.nome,
+            ano=payload.ano,
+            semestre=payload.semestre,
+            professor_id=payload.professor_id,
+        )
+
+        # Dispara evento assincronamente para o RabbitMQ
+        event_data = {
+            "evento": "disciplina.criada",
+            "disciplina_id": str(disciplina.id),
+            "nome": disciplina.nome,
+            "ano": disciplina.ano,
+            "semestre": disciplina.semestre,
+            "professor_id": str(disciplina.professor_id),
+        }
+        await publish_event("audit.logs", event_data)
+
+        return disciplina

@@ -23,5 +23,8 @@ class Settings(BaseSettings):
     MONGODB_URL: str = "mongodb://admin:admin123@localhost:27017"
     MONGODB_DB: str = "hotel_mongo_dev"
 
+    # Configurações do RabbitMQ
+    RABBITMQ_URL: str = "amqp://guest:guest@localhost:5672/"
+
 
 settings = Settings()

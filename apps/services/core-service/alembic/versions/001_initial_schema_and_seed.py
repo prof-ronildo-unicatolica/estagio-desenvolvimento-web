@@ -118,7 +118,7 @@ def upgrade() -> None:
     )
 
     # --- INGESTÃO DE DADOS INICIAIS (SEED) ---
-    prof_id = uuid.uuid4()
+    prof_id = uuid.UUID('bed023d2-c85c-4973-9c3d-79d77a5519f1')
     prof_detail_id = uuid.uuid4()
     disc_web_id = uuid.uuid4()
     disc_redes_id = uuid.uuid4()

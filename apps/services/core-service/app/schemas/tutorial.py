@@ -55,3 +55,22 @@ class ProfessorCreateSchema(BaseModel):
     sala: str
     biografia: Optional[str] = None
     biografia_mapa: Optional[Dict[str, Any]] = None
+
+
+class DisciplinaCreateSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    nome: str
+    ano: int
+    semestre: int
+    professor_id: Any = "bed023d2-c85c-4973-9c3d-79d77a5519f1"
+
+
+class DisciplinaResponseSimpleSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: Any
+    nome: str
+    ano: int
+    semestre: int
+    professor_id: Any

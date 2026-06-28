@@ -9,6 +9,8 @@ from app.schemas.tutorial import (
     ProfessorBaseSchema,
     ProfessorCreateSchema,
     SobreResponseSchema,
+    DisciplinaCreateSchema,
+    DisciplinaResponseSimpleSchema,
 )
 from app.services.tutorial_service import TutorialService
 
@@ -30,22 +32,13 @@ def get_professor_por_id(professor_id: uuid.UUID, db: Session = Depends(get_db))
     return prof
 
 
-@router.post("/sobre/professores", response_model=ProfessorBaseSchema, status_code=201)
-def criar_professor(
-    payload: ProfessorCreateSchema,
-    authorization: Optional[str] = Header(None),
+@router.post("/sobre/disciplinas", response_model=DisciplinaResponseSimpleSchema, status_code=201)
+async def criar_disciplina(
+    payload: DisciplinaCreateSchema,
     db: Session = Depends(get_db),
 ):
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Nao autorizado: Token ausente")
-
-    if authorization != "Bearer token-admin-master":
-        raise HTTPException(
-            status_code=403, detail="Acesso proibido: Permissao insuficiente"
-        )
-
     service = TutorialService(db)
-    return service.create_professor(payload)
+    return await service.create_disciplina(payload)
 
 
 @router.get("/debug/error")
