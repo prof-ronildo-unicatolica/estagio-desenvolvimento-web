@@ -70,6 +70,8 @@ class TutorialRepository:
         semestre: int,
         professor_id: Any,
     ) -> Disciplina:
+        if isinstance(professor_id, str):
+            professor_id = uuid.UUID(professor_id)
         disciplina = Disciplina(
             nome=nome,
             ano=ano,

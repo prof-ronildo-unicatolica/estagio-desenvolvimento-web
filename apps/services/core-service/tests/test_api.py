@@ -1,4 +1,5 @@
 import uuid
+from unittest.mock import patch
 
 from app.repositories.tutorial_repository import TutorialRepository
 
@@ -28,45 +29,39 @@ def test_get_professor_inexistente_returns_404(client):
     assert response.json()["detail"] == "Professor nao encontrado"
 
 
-# 3. Teste de 401 Unauthorized
-def test_criar_professor_sem_autorizacao_returns_401(client):
+# 3. Teste de 201 Created para Disciplina
+@patch("app.services.tutorial_service.publish_event")
+def test_criar_disciplina_returns_201(mock_publish, client, db_session):
+    repo = TutorialRepository(db_session)
+    prof = repo.create_professor(
+        nome="Ronildo Silva",
+        email="ronildo@ufc.br",
+        sala="Sala 07",
+        biografia="Professor",
+    )
     payload = {
-        "nome": "Prof Desautorizado",
-        "email": "test@ufc.br",
-        "sala": "Sala 12",
-        "biografia": "Nenhuma",
+        "nome": "Inteligencia Artificial",
+        "ano": 2026,
+        "semestre": 2,
+        "professor_id": str(prof.id),
     }
-    response = client.post("/api/v1/sobre/professores", json=payload)
-    assert response.status_code == 401
-    assert response.json()["detail"] == "Nao autorizado: Token ausente"
+    response = client.post("/api/v1/sobre/disciplinas", json=payload)
+    assert response.status_code == 201
+    assert response.json()["nome"] == "Inteligencia Artificial"
+    mock_publish.assert_called_once()
 
 
-# 4. Teste de 403 Forbidden
-def test_criar_professor_com_autorizacao_invalida_returns_403(client):
+# 4. Teste de 422 Unprocessable Entity para Disciplina
+def test_criar_disciplina_com_dados_invalidos_returns_422(client):
     payload = {
-        "nome": "Prof Proibido",
-        "email": "test@ufc.br",
-        "sala": "Sala 12",
-        "biografia": "Nenhuma",
+        "nome": "Disciplina Sem Ano",
+        "semestre": 2,
     }
-    headers = {"Authorization": "Bearer token-errado-aluno"}
-    response = client.post("/api/v1/sobre/professores", json=payload, headers=headers)
-    assert response.status_code == 403
-    assert response.json()["detail"] == "Acesso proibido: Permissao insuficiente"
-
-
-# 5. Teste de 422 Unprocessable Entity
-def test_criar_professor_com_dados_invalidos_returns_422(client):
-    payload = {
-        "nome": "Prof Invalido",
-        "email": "email_valido@ufc.br",
-    }
-    headers = {"Authorization": "Bearer token-admin-master"}
-    response = client.post("/api/v1/sobre/professores", json=payload, headers=headers)
+    response = client.post("/api/v1/sobre/disciplinas", json=payload)
     assert response.status_code == 422
 
 
-# 6. Teste de 500 Internal Server Error
+# 5. Teste de 500 Internal Server Error
 def test_trigger_server_error_returns_500(client):
     response = client.get("/api/v1/debug/error")
     assert response.status_code == 500

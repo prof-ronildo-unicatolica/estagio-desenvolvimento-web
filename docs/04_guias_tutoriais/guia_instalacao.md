@@ -274,8 +274,46 @@ poetry run pytest -v
 ### 8.2. Cobertura de Status de Resposta:
 Nossos testes cobrem as seguintes regras e status de resposta HTTP do FastAPI:
 * **`200 OK`**: Rota `/api/v1/sobre` retornando a estrutura serializada correta do Pydantic.
-* **`401 Unauthorized`**: Tentativa de POST em `/sobre/professores` sem enviar o cabeçalho `Authorization`.
-* **`403 Forbidden`**: Tentativa de POST com token diferente de `Bearer token-admin-master`.
+* **`201 Created`**: Rota `/api/v1/sobre/disciplinas` cadastrando uma disciplina com sucesso associada a um professor.
 * **`404 Not Found`**: Busca por ID de professor inexistente (UUID gerado aleatoriamente).
-* **`422 Unprocessable Entity`**: Payload incorreto enviado ao FastAPI (ausência do campo obrigatório `sala`).
+* **`422 Unprocessable Entity`**: Payload incorreto enviado ao FastAPI (ausência de campos obrigatórios como `nome` ou `ano` na disciplina).
 * **`500 Internal Server Error`**: Erro não tratado lançado na rota `/debug/error`, validando o fallback automático de erro interno da API.
+
+---
+
+## 9. Como Inspecionar o MongoDB (Visualização e CLI)
+
+O MongoDB armazena o log de auditoria disparado no fluxo assíncrono via RabbitMQ. Existem 3 formas recomendadas para inspecionar esses dados no Ubuntu:
+
+### 9.1. MongoDB Compass (Interface Gráfica)
+O Compass permite visualizar as coleções JSON de forma amigável:
+1. Baixe e instale o pacote `.deb` no Ubuntu:
+   ```bash
+   wget https://downloads.mongodb.com/compass/mongodb-compass_1.43.0_amd64.deb
+   sudo dpkg -i mongodb-compass_1.43.0_amd64.deb
+   sudo apt-get install -f
+   ```
+2. Abra o MongoDB Compass e conecte usando a URI:
+   ```text
+   mongodb://admin:admin123@localhost:27017
+   ```
+3. Acesse a base `hotel_mongo_dev` -> coleção `logs_auditoria`.
+
+### 9.2. Extensão MongoDB no VS Code
+Conforme descrito na seção 6.3, instale a extensão **MongoDB for VS Code** e adicione a mesma URI de conexão (`mongodb://admin:admin123@localhost:27017`) na barra lateral esquerda.
+
+### 9.3. Via Terminal (CLI) no Docker
+Você pode acessar o shell interativo do MongoDB (`mongosh`) diretamente de dentro do container Docker sem precisar de instalação local na máquina física:
+* **Entrar no Shell**:
+  ```bash
+  docker exec -it hotel-mongo mongosh -u admin -p admin123
+  ```
+* **Comandos úteis dentro do mongosh**:
+  ```javascript
+  use hotel_mongo_dev                      // Entra na database
+  show collections                        // Lista as coleções
+  db.logs_auditoria.find().pretty()       // Lista os logs formatados
+  db.logs_auditoria.findOne()             // Mostra o registro mais recente
+  db.logs_auditoria.countDocuments()      // Conta a quantidade de registros
+  exit                                    // Sai do Shell do MongoDB
+  ```
