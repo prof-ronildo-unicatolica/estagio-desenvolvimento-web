@@ -118,7 +118,7 @@ def upgrade() -> None:
     )
 
     # --- INGESTÃO DE DADOS INICIAIS (SEED) ---
-    prof_id = uuid.UUID('bed023d2-c85c-4973-9c3d-79d77a5519f1')
+    prof_id = uuid.UUID("bed023d2-c85c-4973-9c3d-79d77a5519f1")
     prof_detail_id = uuid.uuid4()
     disc_web_id = uuid.uuid4()
     disc_redes_id = uuid.uuid4()
@@ -159,11 +159,11 @@ def upgrade() -> None:
         '{"type": "Feature", "properties": {"local": "Sao Paulo - SP", "descricao": "Desenvolvedor de software"}, "geometry": {"type": "Point", "coordinates": [-46.6333, -23.5505]}},'
         '{"type": "Feature", "properties": {"local": "Rio de Janeiro - RJ", "descricao": "Especialista em backend"}, "geometry": {"type": "Point", "coordinates": [-43.1729, -22.9068]}},'
         '{"type": "Feature", "properties": {"local": "Florianopolis - SC", "descricao": "Engenheiro de inteligencia artificial"}, "geometry": {"type": "Point", "coordinates": [-48.5480, -27.5954]}},'
-        '{"type": "Feature", "properties": {"local": "Lisboa - PT", "descricao": "Chefe de tecnologia da informacao"}, "geometry": {"type": "Point", "coordinates": [-9.1393, 38.7223]}}'
-        ']}'
+        '{"type": "Feature", "properties": {"local": "Lisboa - PT", "descricao": "Chefe de tecnologia da informação"}, "geometry": {"type": "Point", "coordinates": [-9.1393, 38.7223]}}'
+        "]}"
     )
     op.execute(
-        f"INSERT INTO professor_detalhes (id, professor_id, sala, biografia, biografia_mapa) VALUES ('{prof_detail_id}', '{prof_id}', 'Sala 07 , Bloco D', 'Professor da disciplina de Estagio II no curso de Sistemas de Informacao.', '{geojson_str}')"
+        f"INSERT INTO professor_detalhes (id, professor_id, sala, biografia, biografia_mapa) VALUES ('{prof_detail_id}', '{prof_id}', 'Sala 07 , Bloco D', 'Professor da disciplina de Estágio II no curso de Sistemas de Informação.', '{geojson_str}')"
     )
     # Inserir Disciplinas (1:N)
     op.execute(
@@ -173,7 +173,7 @@ def upgrade() -> None:
         f"INSERT INTO disciplinas (id, nome, ano, semestre, professor_id) VALUES ('{disc_redes_id}', 'Redes de Computadores', 2026, 1, '{prof_id}')"
     )
     op.execute(
-        f"INSERT INTO disciplinas (id, nome, ano, semestre, professor_id) VALUES ('{disc_fsi_id}', 'Fundamentos de Sistemas de Informacao', 2026, 1, '{prof_id}')"
+        f"INSERT INTO disciplinas (id, nome, ano, semestre, professor_id) VALUES ('{disc_fsi_id}', 'Fundamentos de Sistemas de Informação', 2026, 1, '{prof_id}')"
     )
     op.execute(
         f"INSERT INTO disciplinas (id, nome, ano, semestre, professor_id) VALUES ('{disc_arq_id}', 'Arquitetura de Computadores', 2026, 1, '{prof_id}')"

@@ -4,6 +4,8 @@ import DisciplinasList from './components/DisciplinasList'
 import StacksTable from './components/StacksTable'
 import ImageAndCarousel from './components/ImageAndCarousel'
 import Sidebar from './components/Sidebar'
+import VideoComponent from './components/VideoComponent'
+import InteractiveExamples from './components/InteractiveExamples'
 
 export default function App() {
   const [data, setData] = useState(null)
@@ -35,7 +37,7 @@ export default function App() {
         <div className="container">
           <a className="navbar-brand d-flex align-items-center" href="#">
             <span className="fs-4 fw-bold text-primary">Rede Hoteleira</span>
-            <span className="ms-2 badge bg-secondary text-wrap small">Estagio II</span>
+            <span className="ms-2 badge bg-secondary text-wrap small">Estágio II</span>
           </a>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
@@ -66,8 +68,8 @@ export default function App() {
         <header className="mb-5 p-4 bg-white rounded shadow-sm">
           <div className="row align-items-center">
             <div className="col-md-8">
-              <h1 className="display-5 text-primary fw-bold">Sistemas de Informacao - Estagio II</h1>
-              <p className="lead text-secondary mb-0">Projeto Monorepo Base (Boilerplate de Inicializacao)</p>
+              <h1 className="display-5 text-primary fw-bold">Sistemas de Informação - Estágio II</h1>
+              <p className="lead text-secondary mb-0">Projeto Monorepo Base (Boilerplate de Inicialização)</p>
             </div>
             <div className="col-md-4 text-md-end mt-3 mt-md-0">
               <div className="d-flex justify-content-md-end gap-2">
@@ -99,15 +101,15 @@ export default function App() {
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Carregando dados da API...</span>
             </div>
-            <p className="mt-3 text-secondary">Buscando informacoes do servidor backend...</p>
+            <p className="mt-3 text-secondary">Buscando informações do servidor backend...</p>
           </div>
         )}
 
         {error && (
           <div className="alert alert-danger shadow-sm p-4" role="alert">
-            <h4 className="alert-heading fw-bold">Erro de Conexao com o Backend!</h4>
-            <p>Nao foi possivel obter os dados da API em <code>http://localhost:8000/api/v1/sobre</code>.</p>
-            <p className="mb-0">Verifique se o backend esta rodando e se os bancos de dados foram inicializados com sucesso.</p>
+            <h4 className="alert-heading fw-bold">Erro de Conexão com o Backend!</h4>
+            <p>Não foi possível obter os dados da API em <code>http://localhost:8000/api/v1/sobre</code>.</p>
+            <p className="mb-0">Verifique se o backend está rodando e se os bancos de dados foram inicializados com sucesso.</p>
             <hr />
             <p className="mb-0 small text-muted">Detalhe do erro: {error}</p>
           </div>
@@ -120,18 +122,20 @@ export default function App() {
               <Sidebar />
             </div>
 
-            {/* Conteudo Principal */}
+            {/* Conteúdo Principal */}
             <div className="col-md-9" id="tutorial-components">
               <ProfessorProfile professor={data.professor} />
               <DisciplinasList disciplinas={data.disciplinas} />
               <StacksTable stacks={data.stacks} />
               <ImageAndCarousel />
+              <VideoComponent />
+              <InteractiveExamples />
             </div>
           </div>
         )}
 
         <footer className="mt-5 py-4 border-top text-center text-muted">
-          <p className="mb-0">&copy; {new Date().getFullYear()} - Disciplina de Estagio II. Desenvolvido pela Equipe {data?.equipe || 'Alpha'}.</p>
+          <p className="mb-0">&copy; {new Date().getFullYear()} - Disciplina de Estágio II. Desenvolvido pela Equipe {data?.equipe || 'Alpha'}.</p>
         </footer>
       </div>
     </div>

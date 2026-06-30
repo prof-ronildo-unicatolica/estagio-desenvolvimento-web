@@ -5,7 +5,7 @@ export default function Sidebar() {
       <ul className="nav nav-pills flex-column mb-auto">
         <li className="nav-item mb-2">
           <a href="#" className="nav-link text-white active" aria-current="page">
-            Inicio
+            Início
           </a>
         </li>
         <li className="nav-item mb-2">
@@ -25,7 +25,17 @@ export default function Sidebar() {
         </li>
         <li className="nav-item mb-2">
           <a href="#image-carousel" className="nav-link text-white">
-            4. Carousel e Imagem
+            4. Carrossel e Imagem
+          </a>
+        </li>
+        <li className="nav-item mb-2">
+          <a href="#video-section" className="nav-link text-white">
+            5. Player de Vídeo
+          </a>
+        </li>
+        <li className="nav-item mb-2">
+          <a href="#interactive-examples" className="nav-link text-white">
+            6. Exemplos Interativos
           </a>
         </li>
       </ul>

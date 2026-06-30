@@ -3,8 +3,8 @@ export default function DisciplinasList({ disciplinas }) {
 
   return (
     <section className="mb-5" id="disciplinas-list">
-      <h2 className="text-secondary mb-3 fs-4">2. Relacao 1:N - Disciplinas Ministradas</h2>
-      <p className="text-muted small">Lista simples mostrando a disciplina vinculada ao professor e as tecnologias ensinadas (relacao N:M).</p>
+      <h2 className="text-secondary mb-3 fs-4">2. Relação 1:N - Disciplinas Ministradas</h2>
+      <p className="text-muted small">Lista simples mostrando a disciplina vinculada ao professor e as tecnologias ensinadas (relação N:M).</p>
       <div className="list-group shadow-sm border-0">
         {disciplinas.map((disc, idx) => (
           <div key={idx} className="list-group-item list-group-item-action border-1 rounded mb-2">

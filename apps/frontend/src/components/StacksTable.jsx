@@ -3,7 +3,7 @@ export default function StacksTable({ stacks }) {
 
   return (
     <section className="mb-5" id="stacks-table">
-      <h2 className="text-secondary mb-3 fs-4">3. Relacao N:M - Stacks, Tecnologias e Linguagens</h2>
+      <h2 className="text-secondary mb-3 fs-4">3. Relação N:M - Stacks, Tecnologias e Linguagens</h2>
       <p className="text-muted small">Tabela ilustrando quais tecnologias utilizam quais linguagens base (ex: Tailwind usa CSS e JS).</p>
       <div className="table-responsive shadow-sm rounded">
         <table className="table table-bordered table-striped table-hover mb-0 bg-white">
