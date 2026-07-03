@@ -29,9 +29,9 @@ Para alinhar o vocabulário e o fluxo de trabalho durante a disciplina, adotarem
 * **Scrum:** Um framework ágil estruturado para ajudar equipes a desenvolverem, entregarem e manterem produtos complexos. Ele é baseado no empirismo, focando na entrega de valor contínua e em ciclos iterativos.
 * **Papéis do Scrum:**
   * **Product Owner (PO):** O professor da disciplina (ou um aluno designado) atua como o responsável por definir e priorizar as funcionalidades do sistema (Product Backlog) para maximizar o valor do produto.
-  * **Scrum Master:** Responsável por garantir que a equipe entenda e aplique as práticas ágeis, removendo impedimentos do dia a dia.
+  * **Scrum Master:** Um aluno da própria equipe, designado de forma **rotativa a cada Sprint**, responsável por garantir que a equipe entenda e aplique as práticas ágeis, removendo impedimentos do dia a dia. A rotação assegura que todos os integrantes exercitem a liderança e a facilitação ao longo do semestre.
   * **Developers (Equipe de Desenvolvimento):** Os alunos, responsáveis por planejar as tarefas, codificar, testar e entregar os incrementos de software a cada Sprint.
-* **Sprint:** Um ciclo de trabalho fixo e curto (neste caso, 1 ou 2 semanas) onde um conjunto de tarefas é planejado, executado e entregue como uma parte funcional e testável do software.
+* **Sprint:** Um ciclo de trabalho fixo e curto (neste caso, **1 semana**, correspondente a cada aula) onde um conjunto de tarefas é planejado, executado e entregue como uma parte funcional e testável do software.
 * **Épicos (Epics):** Grandes iniciativas ou funcionalidades macro do sistema que não podem ser concluídas em uma única Sprint (ex: "Módulo de Reservas de Hotel" ou "Sistema de Autenticação"). Eles são quebrados em tarefas menores.
 * **Histórias de Usuário (User Stories):** Descrições curtas e simples de uma funcionalidade, escritas sob a perspectiva de quem deseja a nova capacidade (ex: *"Como administrador, eu quero cadastrar um novo hotel, para que ele fique disponível na plataforma"*). Elas devem caber dentro de uma única Sprint.
 
@@ -44,7 +44,8 @@ A disciplina adota o modelo pedagógico de Aprendizagem Baseada em Projetos (Pro
 * **Dinâmica das Aulas Semanais:** Cada aula funciona como a transição de um Sprint. Inicia-se com um alinhamento rápido (similar a uma *Sprint Planning/Daily* adaptada) e segue para o desenvolvimento supervisionado.
 * **Sprint Review Quinzenal:** A cada duas semanas, as equipes realizam uma cerimônia oficial de revisão, demonstrando o incremento do software funcional.
 * **Avaliação Oral/Apresentação:** Juntamente com a Sprint Review, os alunos passam por uma arguição oral para defender as escolhas técnicas, design de código e arquitetura.
-* **Avaliação por Pares (Peer Review):** Mecanismo opcional a ser refinado para que os membros do grupo avaliem a contribuição técnico-comportamental mútua, refletindo as avaliações de desempenho do mercado.
+* **Avaliação por Pares (Peer Review):** Mecanismo **obrigatório e estruturado** (baseado em rubrica simples) para que os membros do grupo avaliem a contribuição técnico-comportamental mútua, refletindo as avaliações de desempenho do mercado. Complementa — e não substitui — a auditoria objetiva do histórico do repositório.
+* **Definição de Pronto (Definition of Done):** Um incremento só é considerado entregue quando atende, no mínimo, aos seguintes critérios: (1) o código passa nos testes automatizados existentes; (2) foi submetido e revisado via Pull Request; (3) não introduz erros de *lint*; e (4) a funcionalidade é demonstrável na Sprint Review. Este DoD serve de referência objetiva na avaliação de cada Sprint.
 
 ### Dinâmica das Equipes e Gerenciamento de Repositórios
 
@@ -77,7 +78,7 @@ Para simular um ambiente corporativo real e garantir uma avaliação justa do es
 * **Posse e Controle dos Repositórios (GitHub):** Os repositórios oficiais de cada projeto (ex: `est_web_turma_a_alpha`, `est_web_turma_a_bravo`, `est_web_turma_b_alpha`) serão criados e mantidos sob administração direta do professor (preferencialmente através de uma *GitHub Organization* dedicada à disciplina).
 * **Alunos como Colaboradores:** Os membros de cada equipe receberão convites como *colaboradores* de seus respectivos repositórios. Essa abordagem assegura a integridade do projeto (evitando exclusões acidentais) e permite a aplicação de regras corporativas.
 * **Fluxo de Trabalho Obrigatório (Pull Requests):** A branch principal (`main`) de todos os repositórios será protegida (*Branch Protection Rules*). Todo código novo deverá obrigatoriamente ser desenvolvido em branches paralelas (ex: `feature/nova-rota`) e submetido via *Pull Request* (PR) para revisão e merge.
-* **Avaliação de Contribuição Individual (Auditoria):** O desenvolvimento do projeto não receberá apenas uma nota global. O professor utilizará as métricas e histórico do repositório (quantidade e qualidade de commits, PRs abertos, revisões de código feitas, aba *Insights/Contributors*) como ferramenta principal para auditar a participação real de cada aluno no desenvolvimento do software.
+* **Avaliação de Contribuição Individual (Auditoria):** O desenvolvimento do projeto não receberá apenas uma nota global. O professor utilizará as métricas e histórico do repositório (quantidade e qualidade de commits, PRs abertos, revisões de código feitas, aba *Insights/Contributors*) como ferramenta principal para auditar a participação real de cada aluno no desenvolvimento do software. A **revisão de Pull Requests dos colegas** também conta como contribuição avaliada, incentivando a colaboração real em vez do simples volume de commits.
 
 ---
 
