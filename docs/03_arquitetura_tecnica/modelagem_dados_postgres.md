@@ -30,6 +30,7 @@ erDiagram
         string nome
         uuid cidade_id FK
         int categoria_estrelas
+        jsonb localizacao
     }
 
     QUARTOS {
@@ -38,7 +39,17 @@ erDiagram
         string numero
         string tipo
         numeric preco_diaria
-        int capacidade_hospedes
+        int max_adultos
+        int max_criancas
+    }
+
+    TARIFAS_TEMPORADA {
+        uuid id PK
+        uuid hotel_id FK
+        string nome
+        date data_inicio
+        date data_fim
+        numeric multiplicador
     }
 
     COMODIDADES {
@@ -57,7 +68,14 @@ erDiagram
         uuid quarto_id FK
         date data_checkin
         date data_checkout
-        int quantidade_hospedes
+        int quantidade_adultos
+        int quantidade_criancas
+        boolean early_checkin
+        boolean late_checkout
+        boolean necessita_berco
+        string tarifa_tipo
+        date data_limite_cancelamento
+        numeric valor_multa_cancelamento
         numeric valor_total
         string status
     }
@@ -86,6 +104,7 @@ erDiagram
 
     CIDADES ||--o{ HOTEIS : "contém"
     HOTEIS ||--o{ QUARTOS : "possui"
+    HOTEIS ||--o{ TARIFAS_TEMPORADA : "define"
     HOTEIS ||--o{ HOTEL_COMODIDADES : "possui"
     COMODIDADES ||--o{ HOTEL_COMODIDADES : "pertence"
     USUARIOS ||--o{ RESERVAS : "solicita"
@@ -130,6 +149,7 @@ Armazena as informações das filiais da franquia.
 | `nome` | `VARCHAR(100)` | `NOT NULL` | Nome da filial do hotel. |
 | `cidade_id` | `UUID` | `FOREIGN KEY REFERENCES cidades(id)` | Cidade na qual o hotel está localizado. |
 | `categoria_estrelas` | `INTEGER` | `CHECK (categoria_estrelas BETWEEN 1 AND 5)` | Classificação do hotel (1 a 5 estrelas). |
+| `localizacao` | `JSONB` | `NULL` | GeoJSON do tipo `Point` com as coordenadas do hotel. Necessário apenas para o RFO05 (bônus), que testa se o hotel cai dentro do `limite_territorial` da cidade. |
 
 ### Tabela: `quartos`
 Armazena as unidades habitacionais disponíveis para reserva em cada hotel.
@@ -141,7 +161,20 @@ Armazena as unidades habitacionais disponíveis para reserva em cada hotel.
 | `numero` | `VARCHAR(10)` | `NOT NULL` | Número ou identificador do quarto (ex: "101", "204-B"). |
 | `tipo` | `VARCHAR(50)` | `NOT NULL` | Tipo do quarto (ex: "Standard", "Luxo", "Suíte Presidencial"). |
 | `preco_diaria` | `NUMERIC(10, 2)` | `CHECK (preco_diaria >= 0)` | Preço cobrado por diária neste quarto específico. |
-| `capacidade_hospedes`| `INTEGER` | `CHECK (capacidade_hospedes >= 1)` | Número máximo de pessoas permitidas no quarto. |
+| `max_adultos` | `INTEGER` | `CHECK (max_adultos >= 1)` | Número máximo de adultos permitidos no quarto. |
+| `max_criancas` | `INTEGER` | `DEFAULT 0`, `CHECK (max_criancas >= 0)` | Número máximo de crianças permitidas no quarto. |
+
+### Tabela: `tarifas_temporada`
+Períodos de alta/baixa temporada que multiplicam o `preco_diaria` base do quarto durante o cálculo do valor da reserva (RFO08).
+
+| Nome da Coluna | Tipo SQL | Restrições | Descrição |
+| :--- | :--- | :--- | :--- |
+| `id` | `UUID` | `PRIMARY KEY` | Identificador único da tarifa (UUIDv7). |
+| `hotel_id` | `UUID` | `FOREIGN KEY REFERENCES hoteis(id)` | Hotel ao qual a tarifa se aplica. |
+| `nome` | `VARCHAR(100)` | `NOT NULL` | Nome da temporada (ex: "Réveillon", "Alta Temporada de Julho"). |
+| `data_inicio` | `DATE` | `NOT NULL` | Primeiro dia de vigência da tarifa. |
+| `data_fim` | `DATE` | `NOT NULL`, `CHECK (data_fim >= data_inicio)` | Último dia de vigência da tarifa. |
+| `multiplicador` | `NUMERIC(4, 2)` | `CHECK (multiplicador > 0)` | Fator aplicado ao preço da diária (ex: `1.50` = 50% mais caro; `0.80` = 20% de desconto). |
 
 ### Tabela: `comodidades`
 Catálogo global de serviços/benefícios oferecidos pelos hotéis.
@@ -169,8 +202,15 @@ Representa a transação de locação de um quarto por um período.
 | `quarto_id` | `UUID` | `FOREIGN KEY REFERENCES quartos(id)` | Quarto locado. |
 | `data_checkin` | `DATE` | `NOT NULL` | Data de início da hospedagem. |
 | `data_checkout` | `DATE` | `NOT NULL`, `CHECK (data_checkout > data_checkin)` | Data de saída. |
-| `quantidade_hospedes`| `INTEGER` | `CHECK (quantidade_hospedes >= 1)` | Número de pessoas presentes na hospedagem. |
-| `valor_total` | `NUMERIC(10, 2)` | `NOT NULL` | Valor das diárias mais os serviços adicionais contratados. |
+| `quantidade_adultos` | `INTEGER` | `CHECK (quantidade_adultos >= 1)` | Número de adultos na hospedagem. |
+| `quantidade_criancas` | `INTEGER` | `DEFAULT 0`, `CHECK (quantidade_criancas >= 0)` | Número de crianças, tarifadas de forma diferenciada (RFO07). |
+| `early_checkin` | `BOOLEAN` | `DEFAULT FALSE`, `NOT NULL` | Solicitou entrada antecipada (RFO09). |
+| `late_checkout` | `BOOLEAN` | `DEFAULT FALSE`, `NOT NULL` | Solicitou saída tardia (RFO09). |
+| `necessita_berco` | `BOOLEAN` | `DEFAULT FALSE`, `NOT NULL` | Solicitou berço no quarto. |
+| `tarifa_tipo` | `VARCHAR(20)` | `DEFAULT 'Reembolsavel'`, `CHECK (tarifa_tipo IN ('Reembolsavel', 'Nao Reembolsavel'))` | Define a política de cancelamento aplicada (RFO10). |
+| `data_limite_cancelamento` | `DATE` | `NULL` | Último dia para cancelar sem multa. Nulo quando a tarifa não é reembolsável. |
+| `valor_multa_cancelamento` | `NUMERIC(10, 2)` | `DEFAULT 0`, `CHECK (valor_multa_cancelamento >= 0)` | Multa efetivamente cobrada caso a reserva seja cancelada (RFO10). |
+| `valor_total` | `NUMERIC(10, 2)` | `NOT NULL`, `CHECK (valor_total >= 0)` | Valor das diárias (já com multiplicador de temporada) mais os serviços adicionais contratados. |
 | `status` | `VARCHAR(20)` | `DEFAULT 'Pendente'`, `CHECK (status IN ('Pendente', 'Confirmada', 'Cancelada'))` | Estado atual do fluxo de reserva. |
 
 ### Tabela: `avaliacoes`
@@ -261,20 +301,22 @@ erDiagram
     }
 
     DISCIPLINA_TECNOLOGIA {
-        uuid disciplina_id PK
-        uuid tecnologia_id PK
+        uuid disciplina_id PK,FK
+        uuid tecnologia_id PK,FK
     }
 
     TECNOLOGIA_LINGUAGEM {
-        uuid tecnologia_id PK
-        uuid linguagem_id PK
+        uuid tecnologia_id PK,FK
+        uuid linguagem_id PK,FK
     }
 
     PROFESSORES ||--|| PROFESSOR_DETALHES : "1:1"
     PROFESSORES ||--o{ DISCIPLINAS : "1:N"
     STACKS ||--o{ TECNOLOGIAS : "1:N"
-    DISCIPLINAS }o--o{ TECNOLOGIAS : "N:M (via DISCIPLINA_TECNOLOGIA)"
-    TECNOLOGIAS }o--o{ LINGUAGENS : "N:M (via TECNOLOGIA_LINGUAGEM)"
+    DISCIPLINAS ||--o{ DISCIPLINA_TECNOLOGIA : "N:M"
+    TECNOLOGIAS ||--o{ DISCIPLINA_TECNOLOGIA : "N:M"
+    TECNOLOGIAS ||--o{ TECNOLOGIA_LINGUAGEM : "N:M"
+    LINGUAGENS ||--o{ TECNOLOGIA_LINGUAGEM : "N:M"
 ```
 
 ### Campos Especiais

@@ -34,19 +34,25 @@ docker compose up --build
 Isso vai:
 1. Subir o **PostgreSQL** e esperar ele ficar saudável
 2. Subir o **MongoDB** e esperar ele ficar saudável
-3. Fazer o build da imagem do **backend** (core-service)
-4. Executar `alembic upgrade head` para criar as tabelas e injetar os seeds
-5. Subir o servidor **uvicorn** na porta 8000
-6. Fazer o build multi-stage da imagem do **frontend** (React → Nginx)
-7. Servir o frontend na porta 5173
+3. Subir o **RabbitMQ** e esperar ele ficar saudável
+4. Fazer o build da imagem do **backend** (core-service)
+5. Executar `alembic upgrade head` para criar as tabelas e injetar os seeds
+6. Executar `python -m app.core.seed_mongo` para popular o MongoDB
+7. Subir o servidor **uvicorn** na porta 8000
+8. Subir o **audit-worker**, que consome a fila `audit.logs` e grava a auditoria no MongoDB
+9. Fazer o build multi-stage da imagem do **frontend** (React → Nginx)
+10. Servir o frontend na porta 5173
 
-### Opção 2: Somente os bancos de dados
+### Opção 2: Somente a infraestrutura
 
 Para desenvolvimento local (backend e frontend rodando fora do Docker):
 
 ```bash
-docker compose up postgres mongodb
+docker compose up postgres mongodb rabbitmq
 ```
+
+> [!NOTE]
+> Suba o `rabbitmq` junto com os bancos. O `core-service` publica eventos na fila já no boilerplate do tutorial, e sem o broker a criação de disciplinas falha ao publicar o evento.
 
 ### Opção 3: Em background (detached)
 
@@ -65,6 +71,10 @@ docker compose up --build -d
 | **Swagger UI** | http://localhost:8000/docs | — |
 | **PostgreSQL** | `localhost:5432` | `postgres` / `postgres` |
 | **MongoDB** | `localhost:27017` | `admin` / `admin123` |
+| **RabbitMQ (AMQP)** | `localhost:5672` | `guest` / `guest` |
+| **RabbitMQ (painel web)** | http://localhost:15672 | `guest` / `guest` |
+
+O `audit-worker` não expõe portas: é um consumidor da fila, sem servidor HTTP. Para acompanhar o que ele processa, use `docker compose logs audit-worker -f`.
 
 ---
 
@@ -76,6 +86,7 @@ docker compose ps
 
 # Ver os logs de um serviço específico
 docker compose logs core-service -f
+docker compose logs audit-worker -f
 docker compose logs frontend -f
 
 # Parar e remover todos os containers (mantém os volumes/dados)
@@ -104,7 +115,12 @@ POSTGRES_PORT=5432
 
 MONGODB_URL=mongodb://admin:admin123@localhost:27017
 MONGODB_DB=hotel_mongo_dev
+
+RABBITMQ_URL=amqp://guest:guest@localhost:5672/
 ```
+
+> [!NOTE]
+> Dentro do Docker, os hosts são os **nomes dos serviços** (`postgres`, `mongodb`, `rabbitmq`), não `localhost` — é assim que o `docker-compose.yml` as define. O `localhost` acima vale só para rodar o backend fora do container.
 
 > [!WARNING]
 > Nunca faça commit do arquivo `.env` com credenciais reais no Git. O arquivo `.gitignore` já ignora o `.env` por padrão. Use o `.env.example` como modelo documentado.

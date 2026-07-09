@@ -31,7 +31,13 @@ classDiagram
         +String nome
         +UUID cidade_id
         +Int categoria_estrelas
+        +JSONB localizacao
         +calcular_media_avaliacoes() Float
+    }
+
+    class Comodidade {
+        +UUID id
+        +String nome
     }
 
     class Quarto {
@@ -94,6 +100,7 @@ classDiagram
     Cidade "1" --> "*" Hotel : sedia
     Hotel "1" --> "*" Quarto : oferece
     Hotel "1" --> "*" TarifaTemporada : aplica
+    Hotel "*" --> "*" Comodidade : disponibiliza
     Usuario "1" --> "*" Reserva : realiza
     Quarto "1" --> "*" Reserva : aluga
     Usuario "1" --> "*" Avaliacao : publica
@@ -121,7 +128,7 @@ sequenceDiagram
     %% Passo 1: Busca
     Note over Cliente, Front: [Tela 2: Home e Busca de Hoteis]
     Cliente->>Front: Filtra por Cidade, Datas e Hóspedes
-    Front->>API: GET /api/v1/busca (cidade_id, checkin, checkout, hospedes)
+    Front->>API: GET /api/v1/busca (cidade_id, checkin, checkout, adultos, criancas)
     API->>NoSQL: Consulta catálogo desnormalizado (catalogo_hoteis)
     NoSQL-->>API: Retorna documento com Hoteis e Quartos
     API-->>Front: JSON estruturado de hotéis/quartos

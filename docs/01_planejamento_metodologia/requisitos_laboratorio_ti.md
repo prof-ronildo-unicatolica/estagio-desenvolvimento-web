@@ -25,8 +25,8 @@ Para agilizar as aulas e padronizar o ambiente, caso seja possível a pré-confi
 - **Python** (Microsoft)
 - **Pylance** (Microsoft)
 - **GitLens** (GitKraken)
-- **Tailwind CSS IntelliSense** (Tailwind Labs)
 - **ESLint** (Dirk Baeumer)
+- **Docker** (Microsoft)
 
 ---
 

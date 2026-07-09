@@ -52,9 +52,12 @@ Adotaremos a estrutura padrão de projetos Python gerenciados via **Poetry**, se
 │   ├── services/              # Testes unitários de regras de negócio
 │   └── workers/               # Testes de processamento de filas
 ├── pyproject.toml             # Dependências e empacotamento gerenciados pelo Poetry
-├── docker-compose.yml         # Orquestração do Postgres e RabbitMQ locais
+├── Dockerfile                 # Build da imagem deste serviço
 └── README.md
 ```
+
+> [!NOTE]
+> O `docker-compose.yml` que orquestra Postgres, MongoDB, RabbitMQ e os serviços fica na **raiz do monorepo**, não dentro do `core-service`. Veja [Estrutura de Diretórios](./estrutura_pastas.md).
 
 ---
 

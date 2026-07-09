@@ -8,8 +8,10 @@ Este guia explica como os testes estão organizados no **core-service**, como ex
 
 ```text
 tests/
+├── __init__.py          # Marca o pacote de testes
 ├── conftest.py          # Fixtures compartilhadas (client, db_session)
 ├── test_api.py          # Testes de integração das rotas HTTP (status codes)
+├── test_auth_basico.py  # Testes de fumaça do auth placeholder (login e RBAC)
 └── test_repository.py   # Testes unitários do repositório (camada de dados)
 ```
 
@@ -27,21 +29,26 @@ poetry run pytest -v
 Saída esperada:
 
 ```
-collected 8 items
+collected 13 items
 
-tests/test_api.py::test_get_sobre_returns_200            PASSED
-tests/test_api.py::test_get_professor_inexistente_returns_404  PASSED
-tests/test_api.py::test_criar_professor_sem_autorizacao_returns_401  PASSED
-tests/test_api.py::test_criar_professor_com_autorizacao_invalida_returns_403 PASSED
-tests/test_api.py::test_criar_professor_com_dados_invalidos_returns_422 PASSED
-tests/test_api.py::test_trigger_server_error_returns_500  PASSED
+tests/test_api.py::test_get_sobre_returns_200 PASSED
+tests/test_api.py::test_get_professor_inexistente_returns_404 PASSED
+tests/test_api.py::test_criar_disciplina_returns_201 PASSED
+tests/test_api.py::test_criar_disciplina_com_dados_invalidos_returns_422 PASSED
+tests/test_api.py::test_trigger_server_error_returns_500 PASSED
+tests/test_auth_basico.py::test_login_valido_retorna_token PASSED
+tests/test_auth_basico.py::test_login_invalido_retorna_401 PASSED
+tests/test_auth_basico.py::test_rota_protegida_sem_token_e_bloqueada PASSED
+tests/test_auth_basico.py::test_rota_protegida_com_token_retorna_perfil PASSED
+tests/test_auth_basico.py::test_cliente_nao_acessa_rota_admin PASSED
+tests/test_auth_basico.py::test_admin_acessa_rota_admin PASSED
 tests/test_repository.py::test_create_professor_in_repository PASSED
 tests/test_repository.py::test_get_professor_by_id_in_repository PASSED
 
-8 passed in ~40s
+13 passed in ~90s
 ```
 
-> **Nota**: Os testes de API usam um banco de dados **SQLite em memória** (`test.db`), separado completamente do banco de desenvolvimento. Não é necessário ter o PostgreSQL ou MongoDB rodando para executar os testes.
+> **Nota**: Os testes de API usam um banco **SQLite em arquivo temporário** (`test.db`), separado completamente do banco de desenvolvimento e recriado a cada teste. Não é necessário ter o PostgreSQL, o MongoDB ou o RabbitMQ rodando para executar os testes.
 
 ---
 
@@ -55,10 +62,11 @@ Cada teste verifica um **código de status HTTP** diferente, cobrindo os princip
 | :--- | :---: | :--- |
 | `test_get_sobre_returns_200` | **200 OK** | A rota `/api/v1/sobre` retorna os dados corretos do professor |
 | `test_get_professor_inexistente_returns_404` | **404 Not Found** | Busca por um UUID inexistente retorna erro correto |
-| `test_criar_professor_sem_autorizacao_returns_401` | **401 Unauthorized** | Tentativa sem token retorna erro de autenticação |
-| `test_criar_professor_com_autorizacao_invalida_returns_403` | **403 Forbidden** | Token inválido/sem permissão retorna acesso proibido |
-| `test_criar_professor_com_dados_invalidos_returns_422` | **422 Unprocessable** | Payload incompleto falha na validação do Pydantic |
+| `test_criar_disciplina_returns_201` | **201 Created** | `POST /api/v1/sobre/disciplinas` cria o registro e publica o evento na fila |
+| `test_criar_disciplina_com_dados_invalidos_returns_422` | **422 Unprocessable** | Payload incompleto falha na validação do Pydantic |
 | `test_trigger_server_error_returns_500` | **500 Internal Server Error** | Rota de debug força um erro não tratado |
+
+> **Nota**: `test_criar_disciplina_returns_201` usa `@patch("app.services.tutorial_service.publish_event")` para não depender de um RabbitMQ real, e ainda assim verifica com `mock_publish.assert_called_once()` que o evento *seria* publicado. Esse é o padrão para testar código que fala com serviços externos.
 
 **Exemplo de teste de API:**
 
@@ -82,7 +90,25 @@ def test_get_sobre_returns_200(client, db_session):
 
 ---
 
-### 2. Testes de Repositório (Unitários) — `test_repository.py`
+### 2. Testes de Autenticação (Fumaça) — `test_auth_basico.py`
+
+Documentam o **contrato atual** da API de autenticação, que hoje é um placeholder (`if/else`, sem hash, sem JWT). O "token" devolvido pelo login é simplesmente o e-mail do usuário.
+
+| Teste | O que verifica |
+| :--- | :--- |
+| `test_login_valido_retorna_token` | `POST /api/v1/auth/login` com credenciais corretas devolve `access_token` e `token_type: bearer` |
+| `test_login_invalido_retorna_401` | Senha errada retorna **401 Unauthorized** |
+| `test_rota_protegida_sem_token_e_bloqueada` | `GET /api/v1/auth/me` sem header retorna 401 ou 403 |
+| `test_rota_protegida_com_token_retorna_perfil` | Com token válido retorna o perfil, e a senha **nunca** aparece na resposta |
+| `test_cliente_nao_acessa_rota_admin` | Usuário comum recebe **403 Forbidden** em rota administrativa |
+| `test_admin_acessa_rota_admin` | Usuário admin acessa a rota administrativa com **200 OK** |
+
+> [!IMPORTANT]
+> Ao implementar a autenticação real (JWT + bcrypt) na **Sprint 2**, estes testes devem ser adaptados ou substituídos pela suíte definitiva descrita em [`atividade_auth_sprint2.md`](../02_engenharia_software/atividade_auth_sprint2.md). Os cenários (401, 403, vazamento de senha) continuam válidos; o que muda é como o token é gerado e validado.
+
+---
+
+### 3. Testes de Repositório (Unitários) — `test_repository.py`
 
 Verificam a camada de acesso ao banco diretamente, sem passar pelo HTTP:
 
@@ -122,31 +148,38 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from app.core.database import get_db
 from app.main import app
 from app.models.tutorial import Base
 
-# Banco de dados de teste separado (SQLite em memória)
-SQLALCHEMY_TEST_URL = "sqlite:///./test.db"
-engine = create_engine(SQLALCHEMY_TEST_URL, connect_args={"check_same_thread": False})
+# Banco SQLite em arquivo temporário, separado do de desenvolvimento
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def db_session():
     """Cria e destrói o banco a cada teste."""
     Base.metadata.create_all(bind=engine)
-    SessionLocal = sessionmaker(bind=engine)
-    db = SessionLocal()
+    db = TestingSessionLocal()
     try:
         yield db
     finally:
         db.close()
         Base.metadata.drop_all(bind=engine)
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def client(db_session):
-    """Cliente HTTP que usa o banco de testes."""
-    # ... injeta o db_session na app
-    with TestClient(app) as c:
+    """Cliente HTTP que usa o banco de testes no lugar do banco real."""
+    def override_get_db():
+        yield db_session
+
+    app.dependency_overrides[get_db] = override_get_db
+    # raise_server_exceptions=False deixa o 500 virar resposta HTTP,
+    # em vez de estourar a exceção dentro do teste.
+    with TestClient(app, raise_server_exceptions=False) as c:
         yield c
+    app.dependency_overrides.clear()
 ```
 
 ---
@@ -161,13 +194,21 @@ def test_minha_nova_rota_returns_201(client, db_session):
         "campo1": "valor1",
         "campo2": "valor2",
     }
-    headers = {"Authorization": "Bearer token-admin-master"}
-    
+    # Obtenha o token pelo login — não invente um valor fixo.
+    token = client.post(
+        "/api/v1/auth/login",
+        json={"email": "admin@hotel.com", "senha": "admin123"},
+    ).json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
     response = client.post("/api/v1/minha-rota", json=payload, headers=headers)
-    
+
     assert response.status_code == 201
     assert response.json()["campo1"] == "valor1"
 ```
+
+> [!TIP]
+> Pegar o token pelo endpoint de login mantém o teste válido depois que a Sprint 2 trocar o placeholder por JWT — um token escrito à mão no teste quebraria.
 
 ### Para um novo método de repositório (`test_repository.py`)
 

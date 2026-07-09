@@ -46,7 +46,6 @@ O sistema do projeto prático (API do back-end + front-end) deve atender obrigat
 
 ### B. Busca e Catálogo (CQRS)
 * **RFO04 - Pesquisa de Catálogo Otimizada (MongoDB):** A busca principal de hotéis e quartos exibida na home deve consumir diretamente os documentos desnormalizados da coleção `catalogo_hoteis` no MongoDB.
-* **RFO05 - Busca por Limites Territoriais:** A API do FastAPI deve permitir filtrar hotéis cujas coordenadas estejam dentro do polígono geográfico (`limite_territorial` em JSONB/GeoJSON) da cidade selecionada.
 
 ### C. Reserva e Processamento (Mensageria)
 * **RFO06 - Solicitação de Reserva Assíncrona:** O FastAPI deve salvar a reserva no Postgres com status `Pendente`, publicar na fila `solicitacoes-reserva` do RabbitMQ e responder ao cliente imediatamente com código `202 Accepted` para liberar a interface.
@@ -62,6 +61,14 @@ O sistema do projeto prático (API do back-end + front-end) deve atender obrigat
 
 ### D. Avaliações e Cadastro
 * **RFO12 - Restrição de Avaliações:** Apenas permitir que um cliente avalie um hotel se ele de fato possuir uma reserva `Confirmada` naquele hotel e se o check-out já tiver ocorrido.
+
+---
+
+## 2.1. Requisitos Opcionais (Bônus)
+
+Não fazem parte do entregável mínimo. Equipes que concluírem o caminho crítico podem implementá-los para pontuação adicional, conforme o [roadmap de sprints](../01_planejamento_metodologia/roadmap_sprints.md).
+
+* **RFO05 - Busca por Limites Territoriais:** A API do FastAPI deve permitir filtrar hotéis cujas coordenadas (`localizacao` em JSONB/GeoJSON, na tabela `hoteis`) estejam dentro do polígono geográfico (`limite_territorial`) da cidade selecionada.
 
 ---
 

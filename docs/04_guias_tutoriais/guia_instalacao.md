@@ -200,6 +200,7 @@ No diretório `apps/frontend`:
 ### 6.1. Drivers Utilizados no Backend
 * **`psycopg2-binary`**: Driver que faz a conexão do Python com o PostgreSQL. A versão `binary` instala pré-compilada, funcionando em Windows e Linux sem necessidade de instalar compiladores C locais.
 * **`motor`**: Driver assíncrono oficial para conexões do MongoDB no Python, essencial para que chamadas NoSQL não travem a thread do FastAPI.
+* **`aio-pika`**: Cliente assíncrono do RabbitMQ (protocolo AMQP). É usado tanto pelo `core-service`, que **publica** eventos, quanto pelo `audit-worker`, que os **consome**. Como `app/main.py` o importa em cadeia, o backend não sobe sem esta dependência.
 
 ### 6.2. MongoDB no Node.js (Mongoose)
 Para fins comparativos, caso os alunos trabalhassem o frontend ou microsserviços em JavaScript/Node.js, a biblioteca padrão de conexão seria o **Mongoose** (uma biblioteca ODM - Object Data Modeling). 
