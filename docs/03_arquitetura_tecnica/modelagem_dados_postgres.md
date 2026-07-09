@@ -206,96 +206,11 @@ Tabela associativa Muitos-para-Muitos mapeando os serviços adicionais vinculado
 
 ---
 
-## 3. Comandos SQL DDL (Referência para Criação)
+## 3. Implementação do Esquema
 
-```sql
--- Usuários
-CREATE TABLE usuarios (
-    id UUID PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    senha_hash VARCHAR(255) NOT NULL,
-    is_admin BOOLEAN DEFAULT FALSE NOT NULL
-);
-
--- Cidades
-CREATE TABLE cidades (
-    id UUID PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    estado CHAR(2) NOT NULL,
-    limite_territorial JSONB NOT NULL
-);
-
--- Hotéis
-CREATE TABLE hoteis (
-    id UUID PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    cidade_id UUID NOT NULL REFERENCES cidades(id) ON DELETE CASCADE,
-    categoria_estrelas INTEGER NOT NULL CHECK (categoria_estrelas BETWEEN 1 AND 5)
-);
-
--- Quartos
-CREATE TABLE quartos (
-    id UUID PRIMARY KEY,
-    hotel_id UUID NOT NULL REFERENCES hoteis(id) ON DELETE CASCADE,
-    numero VARCHAR(10) NOT NULL,
-    tipo VARCHAR(50) NOT NULL,
-    preco_diaria NUMERIC(10, 2) NOT NULL CHECK (preco_diaria >= 0),
-    capacidade_hospedes INTEGER NOT NULL CHECK (capacidade_hospedes >= 1)
-);
-
--- Comodidades (Catálogo)
-CREATE TABLE comodidades (
-    id UUID PRIMARY KEY,
-    nome VARCHAR(100) UNIQUE NOT NULL
-);
-
--- Hotel_Comodidades (Associação N:M)
-CREATE TABLE hotel_comodidades (
-    hotel_id UUID NOT NULL REFERENCES hoteis(id) ON DELETE CASCADE,
-    comodidade_id UUID NOT NULL REFERENCES comodidades(id) ON DELETE CASCADE,
-    PRIMARY KEY (hotel_id, comodidade_id)
-);
-
--- Reservas
-CREATE TABLE reservas (
-    id UUID PRIMARY KEY,
-    usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-    quarto_id UUID NOT NULL REFERENCES quartos(id) ON DELETE CASCADE,
-    data_checkin DATE NOT NULL,
-    data_checkout DATE NOT NULL,
-    quantidade_hospedes INTEGER NOT NULL CHECK (quantidade_hospedes >= 1),
-    valor_total NUMERIC(10, 2) NOT NULL CHECK (valor_total >= 0),
-    status VARCHAR(20) DEFAULT 'Pendente' NOT NULL CHECK (status IN ('Pendente', 'Confirmada', 'Cancelada')),
-    CONSTRAINT chk_data_checkout CHECK (data_checkout > data_checkin)
-);
-
--- Avaliações
-CREATE TABLE avaliacoes (
-    id UUID PRIMARY KEY,
-    usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-    hotel_id UUID NOT NULL REFERENCES hoteis(id) ON DELETE CASCADE,
-    nota INTEGER NOT NULL CHECK (nota BETWEEN 1 AND 5),
-    comentario TEXT,
-    data_publicacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
--- Serviços Adicionais (Catálogo)
-CREATE TABLE servicos_adicionais (
-    id UUID PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    preco NUMERIC(10, 2) NOT NULL CHECK (preco >= 0)
-);
-
--- Reserva_Serviços (Associação N:M)
-CREATE TABLE reserva_servicos (
-    reserva_id UUID NOT NULL REFERENCES reservas(id) ON DELETE CASCADE,
-    servico_id UUID NOT NULL REFERENCES servicos_adicionais(id) ON DELETE CASCADE,
-    quantidade INTEGER DEFAULT 1 NOT NULL CHECK (quantidade >= 1),
-    preco_cobrado NUMERIC(10, 2) NOT NULL CHECK (preco_cobrado >= 0),
-    PRIMARY KEY (reserva_id, servico_id)
-);
-```
+> O ERD e o dicionário de dados acima são a **especificação**. A implementação do esquema é atividade da equipe: cabe a vocês escrever os modelos SQLAlchemy e gerar a migração Alembic correspondente, respeitando os tipos, restrições (`NOT NULL`, `UNIQUE`, `CHECK`) e chaves estrangeiras documentados.
+>
+> Use a migração `001_initial_schema_and_seed.py` do boilerplate tutorial apenas como **referência de forma** (como se declara uma tabela, uma FK com `ON DELETE CASCADE`, uma associação N:M) — nunca como fonte das tabelas do sistema de reservas.
 
 ---
 
@@ -315,7 +230,7 @@ erDiagram
 
     PROFESSOR_DETALHES {
         uuid id PK
-        uuid professor_id FK UK
+        uuid professor_id FK,UK
         string sala
         text biografia
         json biografia_mapa
