@@ -1,11 +1,11 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # ─── Bancos de Dados ────────────────────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
     container_name: hotel-postgres
-    restart: always
+    restart: unless-stopped #always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -23,7 +23,7 @@ services:
   mongodb:
     image: mongo:7.0
     container_name: hotel-mongo
-    restart: always
+    restart: unless-stopped
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=admin123
@@ -40,7 +40,7 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: hotel-rabbitmq
-    restart: always
+    restart: unless-stopped
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
@@ -59,7 +59,7 @@ services:
       context: ./apps/services/core-service
       dockerfile: Dockerfile
     container_name: hotel-core-service
-    restart: always
+    restart: unless-stopped
     environment:
       - POSTGRES_SERVER=postgres
       - POSTGRES_USER=postgres
@@ -90,7 +90,7 @@ services:
       context: ./apps/services/core-service
       dockerfile: Dockerfile
     container_name: hotel-audit-worker
-    restart: always
+    restart: unless-stopped
     environment:
       - POSTGRES_SERVER=postgres
       - POSTGRES_USER=postgres
@@ -115,7 +115,7 @@ services:
       context: ./apps/frontend
       dockerfile: Dockerfile
     container_name: hotel-frontend
-    restart: always
+    restart: unless-stopped
     ports:
       - "5173:80"
     depends_on:
