@@ -13,6 +13,7 @@ Para facilitar a navegação, os documentos estão organizados nas categorias ab
 Documentos voltados para a estruturação do semestre, regras de avaliação e divisão de equipes.
 
 * **[Plano de Curso e Metodologia](./docs/01_planejamento_metodologia/plano_curso_estagio_ii.md)**: Visão geral da disciplina, metodologia ágil (Scrum/Sprints), dinâmica das equipes, gerenciamento dos repositórios e critérios de avaliação individual por repositório.
+* **[Equipes e Repositórios — 2026.2](./docs/01_planejamento_metodologia/equipes_2026_2.md)**: Composição das equipes das turmas A e B nesta oferta e o repositório oficial de cada uma.
 * **[Cronograma de Aulas](./docs/01_planejamento_metodologia/cronograma_aulas_2026_2.md)**: Planejamento semana a semana das 19 aulas do semestre, mapeando o avanço das Sprints de desenvolvimento.
 * **[Roadmap das Sprints](./docs/01_planejamento_metodologia/roadmap_sprints.md)**: Detalhamento semanal das 15 sprints, entregáveis de cada uma, marcos de Sprint Review e caminho crítico para equipes menores.
 * **[Requisitos do Laboratório (TI)](./docs/01_planejamento_metodologia/requisitos_laboratorio_ti.md)**: Documento formal destinado ao departamento de Infraestrutura/TI com a lista de softwares e configurações de rede necessárias nas máquinas do laboratório.

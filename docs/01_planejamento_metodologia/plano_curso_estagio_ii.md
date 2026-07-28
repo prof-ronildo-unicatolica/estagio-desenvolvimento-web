@@ -51,31 +51,25 @@ A disciplina adota o modelo pedagógico de Aprendizagem Baseada em Projetos (Pro
 
 Para simular um ambiente corporativo real e garantir uma avaliação justa do esforço individual, a disciplina adotará a seguinte estrutura de desenvolvimento:
 
-* **Tamanho das Equipes:** 3 a 5 alunos. Este tamanho é ideal para permitir a divisão clara de papéis (ex: Frontend, Backend, Banco de Dados, DevOps, QA) e facilitar o trabalho colaborativo.
-  * **Algoritmo de Divisão Automática (Sem Discussão):** Para qualquer quantidade de alunos $N$ na turma, a divisão das equipes é calculada de forma puramente matemática e determinística para priorizar grupos equilibrados de 3 e 4 alunos:
-    * Para $N < 3$: Não é possível formar equipes regulares (tamanho mínimo de 3).
-    * Para $3 \le N \le 5$: Forma-se **1 única equipe** de tamanho $N$.
-    * Para $N = 6$: **2 equipes de 3** ($3 + 3$).
-    * Para $N = 7$: **2 equipes** ($4 + 3$).
-    * Para $N \ge 8$: O número total de equipes é dado por $T = \lceil N / 4 \rceil$ (arredondado para cima). A distribuição exata é:
-      * **Equipes de 4 integrantes:** $x = N - 3T$
-      * **Equipes de 3 integrantes:** $y = 4T - N$
+* **Tamanho das Equipes:** até 5 alunos. Este tamanho permite a divisão clara de papéis (ex: Frontend, Backend, Banco de Dados, DevOps, QA) e mantém o número de projetos sob acompanhamento em um patamar que o professor consegue auditar semana a semana.
+  * **Algoritmo de Divisão Automática (Sem Discussão):** Para qualquer quantidade de alunos $N$ na turma, a divisão é calculada de forma puramente matemática e determinística, minimizando a quantidade de equipes:
+    * O número total de equipes é $T = \lceil N / 5 \rceil$ (arredondado para cima), limitado a **6 equipes** — o teto de projetos que a disciplina comporta acompanhar.
+    * Os alunos, previamente embaralhados por sorteio, são distribuídos de forma **circular** entre as $T$ equipes. Assim a eventual sobra fica espalhada (equipes de 5 e de 4) em vez de concentrada em uma única equipe menor.
+    * Na prática, isso significa $x = N - 4T$ equipes de 5 integrantes e $y = 5T - N$ equipes de 4.
     * **Exemplos práticos da aplicação da regra:**
-      * **Turma de 12 alunos:** $T = 3$ equipes &rarr; $x = 3$ equipes de 4, $y = 0$ equipes de 3 ($4+4+4$)
-      * **Turma de 13 alunos:** $T = 4$ equipes &rarr; $x = 1$ equipe de 4, $y = 3$ equipes de 3 ($4+3+3+3$)
-      * **Turma de 14 alunos:** $T = 4$ equipes &rarr; $x = 2$ equipes de 4, $y = 2$ equipes de 3 ($4+4+3+3$)
-      * **Turma de 15 alunos:** $T = 4$ equipes &rarr; $x = 3$ equipes de 4, $y = 1$ equipe de 3 ($4+4+4+3$)
-      * **Turma de 22 alunos:** $T = 6$ equipes &rarr; $x = 4$ equipes de 4, $y = 2$ equipes de 3 ($4+4+4+4+3+3$)
-  * **Nomenclatura das Equipes:** Para manter a neutralidade e a padronização, cada equipe formada receberá um nome genérico seguindo o alfabeto fonético internacional de acordo com sua ordem (iniciais A, B, C, D, E, F, G...):
-    * **Equipe 1:** Alpha (Alfa)
+      * **Turma de 30 alunos (Turma A):** $T = 6$ equipes &rarr; 6 equipes de 5 ($5+5+5+5+5+5$)
+      * **Turma de 20 alunos (Turma B):** $T = 4$ equipes &rarr; 4 equipes de 5 ($5+5+5+5$)
+      * **Turma de 22 alunos:** $T = 5$ equipes &rarr; 2 equipes de 5, 3 equipes de 4 ($5+5+4+4+4$)
+      * **Turma de 13 alunos:** $T = 3$ equipes &rarr; 1 equipe de 5, 2 equipes de 4 ($5+4+4$)
+  * **Sorteio:** a alocação dos alunos é feita por sorteio aleatório a partir da lista oficial de matriculados, com semente fixa para que o resultado seja reproduzível e auditável. A composição resultante de cada oferta é registrada em documento próprio (ex: [Equipes e Repositórios — 2026.2](equipes_2026_2.md)).
+  * **Nomenclatura das Equipes:** Para manter a neutralidade e a padronização, cada equipe formada receberá um nome genérico seguindo o alfabeto fonético internacional de acordo com sua ordem (iniciais A, B, C, D, E, F):
+    * **Equipe 1:** Alfa (grafada `alpha` nos nomes de repositório)
     * **Equipe 2:** Bravo
     * **Equipe 3:** Charlie
     * **Equipe 4:** Delta
     * **Equipe 5:** Echo
     * **Equipe 6:** Foxtrot
-    * **Equipe 7:** Golf
-    * (Seguindo a ordem alfabética para equipes adicionais: Hotel, India, Juliet, Kilo, Lima, Mike, November, Oscar, Papa...)
-* **Posse e Controle dos Repositórios (GitHub):** Os repositórios oficiais de cada projeto (ex: `est_web_turma_a_alpha`, `est_web_turma_a_bravo`, `est_web_turma_b_alpha`) serão criados e mantidos sob administração direta do professor (preferencialmente através de uma *GitHub Organization* dedicada à disciplina).
+* **Posse e Controle dos Repositórios (GitHub):** Os repositórios oficiais de cada projeto seguem o padrão `est_web_<ano>_<semestre>_turma_<turma>_<equipe>` (ex: `est_web_2026_2_turma_a_alpha`, `est_web_2026_2_turma_a_bravo`, `est_web_2026_2_turma_b_alpha`). A inclusão do ano e do semestre no nome evita colisões e mantém a organização legível entre ofertas sucessivas da disciplina. Os repositórios serão criados e mantidos sob administração direta do professor (preferencialmente através de uma *GitHub Organization* dedicada à disciplina).
 * **Alunos como Colaboradores:** Os membros de cada equipe receberão convites como *colaboradores* de seus respectivos repositórios. Essa abordagem assegura a integridade do projeto (evitando exclusões acidentais) e permite a aplicação de regras corporativas.
 * **Fluxo de Trabalho Obrigatório (Pull Requests):** A branch principal (`main`) de todos os repositórios será protegida (*Branch Protection Rules*). Todo código novo deverá obrigatoriamente ser desenvolvido em branches paralelas (ex: `feature/nova-rota`) e submetido via *Pull Request* (PR) para revisão e merge.
 * **Avaliação de Contribuição Individual (Auditoria):** O desenvolvimento do projeto não receberá apenas uma nota global. O professor utilizará as métricas e histórico do repositório (quantidade e qualidade de commits, PRs abertos, revisões de código feitas, aba *Insights/Contributors*) como ferramenta principal para auditar a participação real de cada aluno no desenvolvimento do software. A **revisão de Pull Requests dos colegas** também conta como contribuição avaliada, incentivando a colaboração real em vez do simples volume de commits.
