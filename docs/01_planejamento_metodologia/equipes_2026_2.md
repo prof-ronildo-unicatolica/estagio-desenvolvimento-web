@@ -63,14 +63,40 @@ Os repositórios seguem o padrão `est_web_<ano>_<semestre>_turma_<turma>_<equip
 
 ## Turma B — 20 alunos, 4 equipes
 
-Sorteio a ser realizado na Aula 01.
-
 | Equipe | Repositório |
 |---|---|
 | Alfa | [`est_web_2026_2_turma_b_alpha`](https://github.com/prof-ronildo-unicatolica/est_web_2026_2_turma_b_alpha) |
 | Bravo | [`est_web_2026_2_turma_b_bravo`](https://github.com/prof-ronildo-unicatolica/est_web_2026_2_turma_b_bravo) |
 | Charlie | [`est_web_2026_2_turma_b_charlie`](https://github.com/prof-ronildo-unicatolica/est_web_2026_2_turma_b_charlie) |
 | Delta | [`est_web_2026_2_turma_b_delta`](https://github.com/prof-ronildo-unicatolica/est_web_2026_2_turma_b_delta) |
+
+### Alfa
+1. Wladyson Araújo Rodrigues
+2. Pedro Henrique Holanda de Oliveira Bezerra
+3. Kelton dos Santos Oliveira
+4. Levi Marques Waterloo
+5. Iara Barros Ferreira
+
+### Bravo
+1. Kelvin Barros Dias
+2. Paula de Freitas Mendes Barbosa
+3. Guilherme Neves de Assis
+4. Francisca Bianca da Silva
+5. Raul de Queiroz Moura
+
+### Charlie
+1. Pedro Renan Rodrigues da Silva
+2. João Paulo Coutinho Knoff
+3. Bruno Pinheiro
+4. Filipe Gabriel Freires do Nascimento
+5. Cauã Gonçalves Dias
+
+### Delta
+1. Mateus Peixoto de Sousa
+2. Ester Luiza de Souza Lima
+3. Thiago de Sousa Silva
+4. João Victor Crispim Pinheiro
+5. Maria Sharon Silva Oliveira
 
 ---
 
