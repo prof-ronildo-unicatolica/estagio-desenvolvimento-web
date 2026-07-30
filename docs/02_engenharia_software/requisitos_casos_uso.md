@@ -31,7 +31,8 @@ O front-end do sistema deve conter, de forma obrigatória, o seguinte fluxo de i
    * Exibição da data limite para cancelamento gratuito (se aplicável) e botão "Cancelar Reserva".
    * Acesso ao formulário de Avaliação (nota e comentário) para reservas com estadias concluídas.
 7. **Painel do Administrador (Gestor):**
-   * Dashboard ou menu administrativo para listagem e criação (CRUDs) das entidades base: **Cidades**, **Hotéis**, **Quartos** e **Tarifas de Temporada**.
+   * Dashboard ou menu administrativo para listagem e criação (CRUDs) das entidades base: **Cidades**, **Hotéis**, **Quartos**, **Tarifas de Temporada**, **Comodidades** e **Serviços Adicionais**.
+   * Consulta somente-leitura da **trilha de auditoria** do MongoDB (UC11).
 
 ---
 
@@ -45,22 +46,23 @@ O sistema do projeto prático (API do back-end + front-end) deve atender obrigat
 * **RFO03 - Hashing de Senhas:** As senhas nunca devem trafegar em texto plano ou ser salvas abertas. Devem sofrer hash criptográfico (bcrypt ou pbkdf2) antes do salvamento no PostgreSQL.
 
 ### B. Busca e Catálogo (CQRS)
-* **RFO04 - Pesquisa de Catálogo Otimizada (MongoDB):** A busca principal de hotéis e quartos exibida na home deve consumir diretamente os documentos desnormalizados da coleção `catalogo_hoteis` no MongoDB.
+* **RFO04 - Pesquisa de Catálogo Otimizada (MongoDB):** A busca principal de hotéis e quartos exibida na home deve consumir diretamente os documentos desnormalizados da coleção `catalogo_hoteis` no MongoDB, que resolve os filtros de **cidade e capacidade**.
+* **RFO04.1 - Filtro de Disponibilidade por Período:** Como o `catalogo_hoteis` não armazena ocupação, a API deve complementar a busca com **uma única** consulta ao PostgreSQL que remove da listagem os quartos com reserva `Pendente` ou `Confirmada` sobrepondo o período pesquisado (`data_checkin < checkout AND data_checkout > checkin`), restrita aos IDs retornados pelo Mongo. Sem isso os parâmetros de check-in/check-out da busca não têm efeito.
 
 ### C. Reserva e Processamento (Mensageria)
 * **RFO06 - Solicitação de Reserva Assíncrona:** O FastAPI deve salvar a reserva no Postgres com status `Pendente`, publicar na fila `solicitacoes-reserva` do RabbitMQ e responder ao cliente imediatamente com código `202 Accepted` para liberar a interface.
-* **RFO07 - Lógica de Preços por Hóspede:**
-  * Bebês (0 a 5 anos): Hospedagem grátis (com opção de solicitar berço).
-  * Crianças (6 a 12 anos): Taxa correspondente a 50% do valor de um hóspede extra adulto.
+* **RFO07 - Lógica de Preços por Hóspede:** As duas faixas são contadas em campos separados da tabela `reservas`, pois têm regras de preço distintas:
+  * Bebês (0 a 5 anos) — campo `quantidade_bebes`: Hospedagem grátis (com opção de solicitar berço via `necessita_berco`). Não consomem a capacidade `max_criancas` do quarto.
+  * Crianças (6 a 12 anos) — campo `quantidade_criancas`: Taxa correspondente a 50% do valor de um hóspede extra adulto.
 * **RFO08 - Precificação Dinâmica (Temporadas):** Aplicar o multiplicador da `TarifaTemporada` (alta estação) nas diárias cujas datas coincidam com o período cadastrado.
 * **RFO09 - Taxa de Entrada/Saída Flexível:** Adicionar acréscimo de 30% da diária por cada opcional selecionado: Early Check-in (entrada a partir de 08h) e/ou Late Checkout (saída até 18h).
 * **RFO10 - Políticas de Cancelamento:**
   * Tarifa Reembolsável: Cancelamento grátis até 48 horas antes do check-in. Cancelamento tardio ou No-Show desconta multa de 1 diária do quarto.
   * Tarifa Não Reembolsável: Desconto de 10% na reserva. Retém 100% do valor em caso de cancelamento.
-* **RFO11 - Trilha de Auditoria Imutável (MongoDB):** Gravar na coleção `historico_auditoria` do MongoDB cada mudança de status da reserva (`SOLICITADA`, `EM_FILA`, `APROVADA`, `CANCELADA`), incluindo detalhes operacionais.
+* **RFO11 - Trilha de Auditoria Imutável (MongoDB):** Gravar na coleção `historico_auditoria` do MongoDB cada mudança de status da reserva, incluindo detalhes operacionais. Os nomes de evento são fixos e idênticos em toda a documentação: `RESERVA_SOLICITADA`, `RESERVA_EM_FILA`, `PAGAMENTO_APROVADO` e `RESERVA_CANCELADA`.
 
 ### D. Avaliações e Cadastro
-* **RFO12 - Restrição de Avaliações:** Apenas permitir que um cliente avalie um hotel se ele de fato possuir uma reserva `Confirmada` naquele hotel e se o check-out já tiver ocorrido.
+* **RFO12 - Restrição de Avaliações:** Apenas permitir que um cliente avalie um hotel se ele de fato possuir uma reserva `Confirmada` naquele hotel e se o check-out já tiver ocorrido. A validação é feita pela FK obrigatória `avaliacoes.reserva_id`, cujo `UNIQUE` também impede mais de uma avaliação para a mesma estadia.
 
 ---
 
@@ -110,12 +112,18 @@ flowchart LR
         UC06([UC06: Avaliar Estadia])
         
         %% Casos de Uso do Gestor
-        UC07([UC07: CRUD Cidades e Hotéis])
+        UC07([UC07: CRUD Cidades])
+        UC08([UC08: CRUD Hotéis])
+        UC09([UC09: CRUD Quartos])
         UC10([UC10: CRUD Tarifas de Temporada])
+        UC15([UC15: CRUD Comodidades])
+        UC16([UC16: CRUD Servicos Adicionais])
+        UC11([UC11: Monitorar Trilha de Auditoria])
         
         %% Casos de Uso do Worker
         UC12([UC12: Validar Vaga e Evitar Overbooking])
-        UC13([UC13: Simular Pagamento])
+        UC13([UC13: Processar Cobrança])
+        UC14([UC14: Atualizar Reserva e Logar Histórico])
     end
 
     %% Conexões do Hóspede
@@ -128,26 +136,40 @@ flowchart LR
 
     %% Conexões do Gestor
     Gestor --> UC07
+    Gestor --> UC08
+    Gestor --> UC09
     Gestor --> UC10
+    Gestor --> UC15
+    Gestor --> UC16
+    Gestor --> UC11
 
     %% Conexões do Worker
     Sistema --> UC12
     Sistema --> UC13
+    Sistema --> UC14
+
+    %% Dependências entre Casos de Uso
+    UC03 -.->|include| UC12
+    UC12 -.->|include| UC13
+    UC13 -.->|include| UC14
+    UC03 -.->|precede| UC06
 ```
 
 ### 4.1. Casos de Uso do Hóspede (Cliente)
 * **UC01 - Cadastrar Conta e Login:** Criar perfil pessoal, validar dados e obter token de autenticação JWT.
 * **UC02 - Buscar Hotéis e Quartos:** Filtrar por destino, período de check-in/out e capacidade total, consultando a visualização rápida do MongoDB.
-* **UC03 - Solicitar Reserva:** Preencher dados de hóspedes, selecionar comodidades (early check-in, late checkout, berço), tipo de tarifa (reembolsável vs não-reembolsável) e fechar pedido.
+* **UC03 - Solicitar Reserva:** Preencher dados de hóspedes (adultos, crianças e bebês separadamente), selecionar opcionais (early check-in, late checkout, berço), serviços adicionais, tipo de tarifa (reembolsável vs não-reembolsável) e fechar pedido.
 * **UC04 - Acompanhar Processamento da Fila:** Visualizar status de carregamento na tela enquanto o front-end consulta o status da reserva via polling.
 * **UC05 - Cancelar Reserva:** Cancelar a estadia pelo painel do hóspede, sofrendo incidência de multa de acordo com o prazo de 48h e tipo de tarifa.
-* **UC06 - Avaliar Estadia:** Deixar nota e comentário após concluir a viagem.
+* **UC06 - Avaliar Estadia:** Deixar nota e comentário após concluir a viagem. A avaliação é vinculada à reserva de origem (`avaliacoes.reserva_id`), que deve pertencer ao usuário logado, estar `Confirmada` e ter `data_checkout` no passado (RFO12). Uma avaliação por estadia.
 
 ### 4.2. Casos de Uso do Gestor (Administrador)
 * **UC07 - Gerenciar Cidades (CRUD):** Cadastrar novos municípios informando os polígonos limites geográficos (GeoJSON).
 * **UC08 - Gerenciar Hotéis (CRUD):** Cadastrar hotéis associados a cidades, definindo número de estrelas e comodidades.
 * **UC09 - Gerenciar Quartos (CRUD):** Cadastrar quartos por hotel com capacidade máxima de adultos e crianças, além do preço de diária padrão.
 * **UC10 - Gerenciar Tarifas de Temporada (CRUD):** Criar períodos de alta estação com multiplicadores percentuais associados à franquia ou hotel específico.
+* **UC15 - Gerenciar Comodidades (CRUD):** Manter o catálogo global de comodidades (tabela `comodidades`) e vincular/desvincular comodidades a cada hotel (tabela `hotel_comodidades`), o que dispara a atualização do array `comodidades` no `catalogo_hoteis`.
+* **UC16 - Gerenciar Serviços Adicionais (CRUD):** Manter o catálogo de serviços extras (tabela `servicos_adicionais`) com seus preços tabelados, que são os itens oferecidos ao hóspede na Tela de Checkout e gravados em `reserva_servicos`.
 * **UC11 - Monitorar Trilha de Auditoria:** Visualizar logs operacionais gerados em segundo plano a partir do MongoDB.
 
 ### 4.3. Casos de Uso do Sistema (Workers Assíncronos)

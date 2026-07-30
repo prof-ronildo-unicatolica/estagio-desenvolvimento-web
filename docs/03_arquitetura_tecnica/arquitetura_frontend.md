@@ -79,7 +79,9 @@ flowchart TD
         AdminDash --> GerirCidades[Gerenciar Cidades]
         AdminDash --> GerirHoteis[Gerenciar Hotéis]
         AdminDash --> GerirQuartos[Gerenciar Quartos]
+        AdminDash --> GerirTarifas[Gerenciar Tarifas de Temporada]
         AdminDash --> GerirServicos[Gerenciar Serviços/Comodidades]
+        AdminDash --> VerAuditoria[Consultar Trilha de Auditoria]
     end
 
     %% Estilos de Conexão
@@ -88,7 +90,7 @@ flowchart TD
     classDef client fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
     classDef status fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
     
-    class AdminDash,GerirCidades,GerirHoteis,GerirQuartos,GerirServicos admin;
+    class AdminDash,GerirCidades,GerirHoteis,GerirQuartos,GerirTarifas,GerirServicos,VerAuditoria admin;
     class Home,ListHoteis,DetalheHotel,Checkout,PainelCliente,Avaliar client;
     class Processando,Sucesso status;
 ```

@@ -11,6 +11,7 @@ Adotamos uma abordagem de **Persistência Poliglota**, utilizando cada banco de 
 * **PostgreSQL (SQL Transacional):** Gerencia dados que necessitam de forte consistência ACÍDICA, controle transacional rigoroso e integridade referencial por chaves estrangeiras (ex: criação da Reserva, autenticação do Usuário e transações financeiras).
 * **MongoDB (NoSQL de Documentos):** Gerencia dois casos de uso específicos:
   1. **Catálogo de Busca Otimizada (`catalogo_hoteis`):** Desnormaliza os dados de hotéis, quartos, comodidades e médias de avaliações em um único documento. Isso permite buscas ultrarápidas na tela principal do front-end com um único acesso à chave, eliminando `JOINs` custosos no Postgres sob alta carga.
+     * **Limite deliberado do catálogo:** o documento representa **o que existe**, não **o que está livre**. Ocupação não é replicada aqui, porque exigiria reescrever o documento a cada reserva confirmada e ainda assim ficaria sujeita a leitura desatualizada. A disponibilidade por período é resolvida pelo PostgreSQL, em uma consulta complementar restrita aos IDs que o Mongo retornou (RFO04.1).
   2. **Trilha de Auditoria Imutável (`historico_auditoria`):** Grava o histórico de eventos de ciclo de vida das reservas. A natureza flexível de documentos do MongoDB permite armazenar diferentes metadados para cada tipo de evento (ex: detalhes de erro de pagamento vs. detalhes de aplicação de cupom) sem engessar o esquema.
   3. **Indexação Geoespacial Nativa:** Facilita a busca de hotéis "próximos a mim" ou dentro de limites territoriais complexos de forma nativa através de índices do tipo `2dsphere`.
 
@@ -122,11 +123,13 @@ Coleção de escrita contínua (Write-Heavy) que rastreia os eventos de processa
 
 ```mermaid
 flowchart LR
-    A[Reserva Solicitada] --> B[Entrou na Fila]
+    A[RESERVA_SOLICITADA] --> B[RESERVA_EM_FILA]
     B --> C{Worker Processa}
-    C -->|Sucesso| D[Pagamento Aprovado]
-    C -->|Falha/Timeout| E[Reserva Cancelada]
+    C -->|Sucesso| D[PAGAMENTO_APROVADO]
+    C -->|Falha/Timeout| E[RESERVA_CANCELADA]
 ```
+
+> Estes quatro nomes de evento são os definidos pelo RFO11 e são exatamente os gravados no diagrama de sequência. Não use variações.
 
 #### Exemplo de Documento: Evento de Solicitação Inicial
 ```json

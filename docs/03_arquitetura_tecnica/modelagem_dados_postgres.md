@@ -58,8 +58,8 @@ erDiagram
     }
 
     HOTEL_COMODIDADES {
-        uuid hotel_id PK
-        uuid comodidade_id PK
+        uuid hotel_id PK,FK
+        uuid comodidade_id PK,FK
     }
 
     RESERVAS {
@@ -70,6 +70,7 @@ erDiagram
         date data_checkout
         int quantidade_adultos
         int quantidade_criancas
+        int quantidade_bebes
         boolean early_checkin
         boolean late_checkout
         boolean necessita_berco
@@ -84,6 +85,7 @@ erDiagram
         uuid id PK
         uuid usuario_id FK
         uuid hotel_id FK
+        uuid reserva_id FK,UK
         int nota
         text comentario
         timestamp data_publicacao
@@ -96,8 +98,8 @@ erDiagram
     }
 
     RESERVA_SERVICOS {
-        uuid reserva_id PK
-        uuid servico_id PK
+        uuid reserva_id PK,FK
+        uuid servico_id PK,FK
         int quantidade
         numeric preco_cobrado
     }
@@ -111,6 +113,7 @@ erDiagram
     QUARTOS ||--o{ RESERVAS : "é_alugado"
     USUARIOS ||--o{ AVALIACOES : "escreve"
     HOTEIS ||--o{ AVALIACOES : "recebe"
+    RESERVAS ||--o| AVALIACOES : "habilita"
     RESERVAS ||--o{ RESERVA_SERVICOS : "consome"
     SERVICOS_ADICIONAIS ||--o{ RESERVA_SERVICOS : "incluso_em"
 ```
@@ -162,7 +165,7 @@ Armazena as unidades habitacionais disponíveis para reserva em cada hotel.
 | `tipo` | `VARCHAR(50)` | `NOT NULL` | Tipo do quarto (ex: "Standard", "Luxo", "Suíte Presidencial"). |
 | `preco_diaria` | `NUMERIC(10, 2)` | `CHECK (preco_diaria >= 0)` | Preço cobrado por diária neste quarto específico. |
 | `max_adultos` | `INTEGER` | `CHECK (max_adultos >= 1)` | Número máximo de adultos permitidos no quarto. |
-| `max_criancas` | `INTEGER` | `DEFAULT 0`, `CHECK (max_criancas >= 0)` | Número máximo de crianças permitidas no quarto. |
+| `max_criancas` | `INTEGER` | `DEFAULT 0`, `CHECK (max_criancas >= 0)` | Número máximo de crianças (6 a 12 anos) permitidas no quarto. Bebês (`quantidade_bebes`) não consomem essa capacidade — apenas demandam berço quando solicitado. |
 
 ### Tabela: `tarifas_temporada`
 Períodos de alta/baixa temporada que multiplicam o `preco_diaria` base do quarto durante o cálculo do valor da reserva (RFO08).
@@ -203,7 +206,8 @@ Representa a transação de locação de um quarto por um período.
 | `data_checkin` | `DATE` | `NOT NULL` | Data de início da hospedagem. |
 | `data_checkout` | `DATE` | `NOT NULL`, `CHECK (data_checkout > data_checkin)` | Data de saída. |
 | `quantidade_adultos` | `INTEGER` | `CHECK (quantidade_adultos >= 1)` | Número de adultos na hospedagem. |
-| `quantidade_criancas` | `INTEGER` | `DEFAULT 0`, `CHECK (quantidade_criancas >= 0)` | Número de crianças, tarifadas de forma diferenciada (RFO07). |
+| `quantidade_criancas` | `INTEGER` | `DEFAULT 0`, `CHECK (quantidade_criancas >= 0)` | Número de crianças de **6 a 12 anos**, tarifadas a 50% do hóspede adulto extra (RFO07). |
+| `quantidade_bebes` | `INTEGER` | `DEFAULT 0`, `CHECK (quantidade_bebes >= 0)` | Número de bebês de **0 a 5 anos**, isentos de cobrança (RFO07). Separado de `quantidade_criancas` porque as duas faixas têm regras de preço distintas. |
 | `early_checkin` | `BOOLEAN` | `DEFAULT FALSE`, `NOT NULL` | Solicitou entrada antecipada (RFO09). |
 | `late_checkout` | `BOOLEAN` | `DEFAULT FALSE`, `NOT NULL` | Solicitou saída tardia (RFO09). |
 | `necessita_berco` | `BOOLEAN` | `DEFAULT FALSE`, `NOT NULL` | Solicitou berço no quarto. |
@@ -221,6 +225,7 @@ Registra a avaliação e o comentário do cliente após a experiência.
 | `id` | `UUID` | `PRIMARY KEY` | Identificador único da avaliação (UUIDv7). |
 | `usuario_id` | `UUID` | `FOREIGN KEY REFERENCES usuarios(id)` | Autor da avaliação. |
 | `hotel_id` | `UUID` | `FOREIGN KEY REFERENCES hoteis(id)` | Hotel avaliado. |
+| `reserva_id` | `UUID` | `UNIQUE`, `NOT NULL`, `FOREIGN KEY REFERENCES reservas(id)` | Estadia que dá direito à avaliação. É o que torna o RFO12 verificável: o serviço valida que a reserva pertence ao `usuario_id`, que seu `status` é `Confirmada` e que `data_checkout` já passou. O `UNIQUE` garante uma única avaliação por estadia. |
 | `nota` | `INTEGER` | `CHECK (nota BETWEEN 1 AND 5)` | Nota de 1 a 5 estrelas dada pelo usuário. |
 | `comentario` | `TEXT` | `NULL` | Feedback em texto. |
 | `data_publicacao` | `TIMESTAMP` | `DEFAULT CURRENT_TIMESTAMP` | Data e hora em que a nota foi postada. |
