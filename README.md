@@ -24,7 +24,7 @@ Documentos que explicam *o que* vamos construir (o problema real) e as regras qu
 
 * **[Contexto e Problematização (Hotelaria)](./docs/02_engenharia_software/contexto_problematica_hotelaria.md)**: Descrição detalhada do cenário, requisitos funcionais (Épicos e Histórias de Usuário) do sistema de gestão hoteleira que será desenvolvido pelas equipes.
 * **[Requisitos Mínimos e Casos de Uso](./docs/02_engenharia_software/requisitos_casos_uso.md)**: Definição do escopo mínimo aceitável para o front-end e back-end, requisitos funcionais (RFO) e não-funcionais (RNFO) obrigatórios.
-* **[Guia Básico de Git, GitHub e Gitflow](./docs/02_engenharia_software/git_github_basico.md)**: Manual obrigatório de versionamento. Cobre comandos fundamentais, fluxo de Pull Requests, proteção de branches, exemplos práticos de Code Review e resolução de conflitos.
+* **[Guia Básico de Git, GitHub e Gitflow](./docs/02_engenharia_software/git_github_basico.md)**: Manual obrigatório de versionamento. Cobre comandos fundamentais, tutorial completo de chaves SSH (Linux e Windows), fluxo de Pull Requests, proteção de branches, exemplos práticos de Code Review e resolução de conflitos.
 * **[Atividade de Autenticação (Sprint 2)](./docs/02_engenharia_software/atividade_auth_sprint2.md)**: Enunciado da atividade que substitui o auth placeholder por JWT e bcrypt, com critérios de aceite (Definition of Done).
 
 ## 3. Arquitetura Técnica e Banco de Dados
