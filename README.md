@@ -43,6 +43,7 @@ Guias que definem *como* o software será construído, estabelecendo os padrões
 
 Manuais práticos para configuração rápida do ambiente local de desenvolvimento.
 
+* **[Guia de Primeiros Passos](./docs/04_guias_tutoriais/guia_primeiros_passos.md)**: **Comece por aqui.** Do repositório clonado até a stack rodando: o que já vem pronto no projeto-base, como subir tudo com um comando, endereços do ambiente, o primeiro Pull Request e solução de problemas comuns.
 * **[Guia de Instalação do Ambiente](./docs/04_guias_tutoriais/guia_instalacao.md)**: Passo a passo para Linux e Windows abrangendo Docker, Python (venv/Poetry), npm (Vite) e comandos úteis do Alembic.
 * **[Guia de Containerização com Docker](./docs/04_guias_tutoriais/guia_docker.md)**: Como subir todo o ambiente (bancos, RabbitMQ, backend, worker e frontend) com um comando, portas expostas e variáveis de ambiente.
 * **[Guia de Testes Automatizados](./docs/04_guias_tutoriais/guia_testes.md)**: Organização da suíte pytest, fixtures do `conftest.py` e como os alunos devem escrever novos testes de rota e repositório.

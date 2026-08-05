@@ -37,9 +37,15 @@ Cada sprint tem duas trilhas paralelas (**Backend** e **Frontend**) e uma **Defi
 ## Primeiro Ciclo (Sprints 1–7) — Construção do MVP
 
 ### Sprint 1 — Fundação e Setup (Aula 02)
-* 🔵 Inicializar o projeto (Poetry/pip), subir **Docker Compose** (PostgreSQL, MongoDB, RabbitMQ), montar a arquitetura em camadas (`api/schemas/services/repositories/models`), `config`, `/health`. Primeiros modelos (`Usuario`, `Cidade`, `Hotel`) e **migração inicial + seed** via Alembic (admin, cidades, hotéis 1–5★).
-* 🟢 Scaffolding do front (Vite + React + Bootstrap), estrutura de pastas, layout base (navbar + rotas), cliente HTTP (axios/fetch) com `baseURL` e tela-esqueleto de navegação.
-* ✅ `docker compose up` sobe toda a stack; `GET /health` responde 200; o front renderiza o shell com rotas vazias.
+> **O projeto-base já está no repositório da equipe.** O professor subiu o esqueleto
+> funcional (backend em camadas, frontend Vite + React e o `docker-compose.yml` com
+> PostgreSQL, MongoDB e RabbitMQ). Esta sprint **não é digitar a estrutura do zero**: é
+> colocar o ambiente no ar, entender o que já existe e adaptá-lo ao domínio de hotelaria.
+> Passo a passo no [Guia de Primeiros Passos](../04_guias_tutoriais/guia_primeiros_passos.md).
+
+* 🔵 Subir a stack com `docker compose up -d --build`, rodar a suíte (`pytest`) e **percorrer a arquitetura em camadas** (`api/schemas/services/repositories/models`, `config`, `/health`) identificando a responsabilidade de cada pasta. Criar os primeiros modelos do domínio (`Usuario`, `Cidade`, `Hotel`) e a **migração + seed** via Alembic (admin, cidades, hotéis 1–5★).
+* 🟢 Rodar o front e **substituir os componentes de demonstração** (perfil, mapa, carrossel) pelo layout base do sistema: navbar + rotas do projeto e cliente HTTP (axios/fetch) com `baseURL` apontando para a API.
+* ✅ `docker compose up` sobe toda a stack; `GET /health` responde 200; o front renderiza o shell com as rotas do sistema; a migração inicial cria as tabelas com o seed. Cada integrante já abriu **pelo menos um Pull Request** para a `develop`.
 
 ### Sprint 2 — Autenticação & Autorização (Aula 03) ⭐
 > **Sprint dedicada à construção do auth pelos próprios alunos.** O exemplo base já traz um auth **propositalmente básico** (`if/else`, sem hash nem token real) que deve ser **substituído** pela versão segura. Objetivos, arquivos e critérios de aceite na [Atividade de Auth (Sprint 2)](../02_engenharia_software/atividade_auth_sprint2.md).

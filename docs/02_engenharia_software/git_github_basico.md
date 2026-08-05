@@ -366,6 +366,12 @@ Estas branches sempre existem no repositório:
 - **`main`** (ou `master`): Contém o código de produção. Sempre deve estar em um estado funcional e estável. Todo código aqui já foi testado e aprovado.
 - **`develop`**: A branch de integração. Todas as novas funcionalidades (features) são mescladas (merged) aqui. É o "próximo release" em construção.
 
+> **Nos repositórios das equipes**, a `develop` é a **branch padrão**: é ela que vem
+> ao clonar o repositório e é ela que aparece pré-selecionada como destino ao abrir um
+> Pull Request. Ela também é **protegida** — não aceita push direto, e todo PR precisa
+> de **pelo menos uma aprovação** de um colega antes do merge. A `main` fica reservada
+> para as versões estáveis entregues ao final de cada sprint.
+
 ### Diagrama do Fluxo (Gitflow)
 
 ```mermaid
@@ -463,8 +469,12 @@ Seguimos o padrão do *Conventional Commits* para facilitar a leitura do histór
 
 Para a disciplina, os repositórios oficiais seguirão um modelo centralizado para simular o controle de qualidade corporativo:
 
-* **Professor (Admin):** É o dono/administrador do repositório. Ele configura regras de proteção (impedindo push direto na `main` e `develop`), monitora as métricas de contribuição individual e pode aprovar/reprovar *Pull Requests*.
+* **Professor (Admin):** É o dono/administrador do repositório. Ele configura as regras de proteção (impedindo push direto na `develop`), monitora as métricas de contribuição individual e pode aprovar/reprovar *Pull Requests*.
 * **Alunos (Collaborators):** Vocês serão convidados para o repositório como colaboradores com permissão de escrita (*Write*). Isso permite clonar, criar branches (`feature/`, `bugfix/`) e enviar (*push*) essas branches para o GitHub. **Vocês não podem commitar diretamente nas branches protegidas**.
+
+> **Sobre a revisão:** o GitHub não permite que você aprove o seu próprio Pull Request.
+> A aprovação obrigatória tem que vir de outro integrante da equipe — por isso revisar o
+> código dos colegas faz parte do trabalho, e não é uma tarefa extra.
 
 ---
 
